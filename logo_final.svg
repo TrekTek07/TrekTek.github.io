@@ -1,0 +1,43 @@
+<svg width="2000" height="2200" viewBox="0 0 2000 2200" xmlns="http://www.w3.org/2000/svg">
+
+  <rect width="2000" height="2200" fill="#111111"/>
+
+  <circle cx="1000" cy="1050" r="580" fill="#111111"/>
+  <circle cx="1000" cy="1050" r="576" fill="none" stroke="#D4AF37" stroke-width="7"/>
+  <circle cx="1000" cy="1050" r="530" fill="none" stroke="#D4AF37" stroke-width="2" stroke-dasharray="12,9" opacity="0.5"/>
+
+  <text x="1000" y="484" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="38" fill="#D4AF37">★</text>
+  <text x="428" y="1058" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="38" fill="#D4AF37">★</text>
+  <text x="1572" y="1058" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="38" fill="#D4AF37">★</text>
+
+  <defs>
+    <path id="topOrnament" d="M 524,1050 A 476,476 0 0,1 1476,1050"/>
+    <path id="bottomText" d="M 628,1215 A 388,388 0 0,0 1372,1215"/>
+  </defs>
+
+  <!-- Top ornamental dots -->
+  <text font-family="Georgia, 'Times New Roman', serif" font-size="52" font-weight="700" fill="#D4AF37" letter-spacing="8" opacity="0.85">
+    <textPath href="#topOrnament" startOffset="50%" text-anchor="middle">✦ ✦ ✦ ✦ ✦ ✦ ✦</textPath>
+  </text>
+
+  <!-- Grant Writing Masterclass curved at bottom -->
+  <text font-family="Georgia, 'Times New Roman', serif" font-size="46" fill="#D4AF37" letter-spacing="12">
+    <textPath href="#bottomText" startOffset="50%" text-anchor="middle">GRANT WRITING MASTERCLASS</textPath>
+  </text>
+
+  <!-- Divider lines -->
+  <line x1="640" y1="808" x2="1360" y2="808" stroke="#D4AF37" stroke-width="2.5" opacity="0.7"/>
+  <line x1="640" y1="1222" x2="1360" y2="1222" stroke="#D4AF37" stroke-width="2.5" opacity="0.7"/>
+
+  <!-- Stacked text -->
+  <text x="1000" y="800" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="52" fill="#D4AF37" letter-spacing="18">THE</text>
+  <text x="1000" y="946" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="170" font-weight="700" fill="#FFFFFF" letter-spacing="10">BUCK</text>
+  <text x="1000" y="1100" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700">
+    <tspan font-size="190" fill="#D4AF37">$</tspan><tspan font-size="130" fill="#FFFFFF" letter-spacing="6">TARTS</tspan>
+  </text>
+  <text x="1000" y="1215" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="130" font-weight="700" fill="#FFFFFF" letter-spacing="14">HERE</text>
+
+  <!-- Copyright -->
+  <text x="1000" y="2120" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="36" fill="#777777" letter-spacing="6">© 2025 THE BUCK $TARTS HERE · ALL RIGHTS RESERVED</text>
+
+</svg>
