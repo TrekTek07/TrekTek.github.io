@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact | The Buck $tarts Here</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-logo">
+      <svg viewBox="0 0 200 200" class="nav-svg" aria-label="The Buck $tarts Here logo">
+        <circle cx="100" cy="100" r="94" fill="none" stroke="#D4AF37" stroke-width="3"/>
+        <circle cx="100" cy="100" r="87" fill="none" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.5"/>
+        <defs>
+          <path id="nc-top4" d="M 51,100 A 49,49 0 0,1 149,100"/>
+          <path id="nc-bot4" d="M 53,108 A 47,47 0 0,0 147,108"/>
+        </defs>
+        <text font-family="Georgia,serif" font-size="7.5" font-weight="700" fill="#D4AF37" letter-spacing="2">
+          <textPath href="#nc-top4" startOffset="50%" text-anchor="middle">✦ ✦ ✦ ✦ ✦ ✦ ✦</textPath>
+        </text>
+        <text font-family="Georgia,serif" font-size="6" fill="#D4AF37" letter-spacing="3.5">
+          <textPath href="#nc-bot4" startOffset="50%" text-anchor="middle">GRANT WRITING MASTERCLASS</textPath>
+        </text>
+        <line x1="62" y1="78" x2="138" y2="78" stroke="#D4AF37" stroke-width="0.7" opacity="0.7"/>
+        <line x1="62" y1="120" x2="138" y2="120" stroke="#D4AF37" stroke-width="0.7" opacity="0.7"/>
+        <text x="100" y="76" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="#D4AF37" letter-spacing="4">THE</text>
+        <text x="100" y="95" text-anchor="middle" font-family="Georgia,serif" font-size="19" font-weight="700" fill="#fff" letter-spacing="2">BUCK</text>
+        <text x="100" y="113" text-anchor="middle" font-family="Georgia,serif" font-weight="700">
+          <tspan font-size="22" fill="#D4AF37">$</tspan><tspan font-size="15" fill="#fff" letter-spacing="1">TARTS</tspan>
+        </text>
+        <text x="100" y="129" text-anchor="middle" font-family="Georgia,serif" font-size="15" font-weight="700" fill="#fff" letter-spacing="3">HERE</text>
+      </svg>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+      <li><a href="courses.html" class="nav-cta">Enroll Now</a></li>
+    </ul>
+    <button class="hamburger" aria-label="Menu">&#9776;</button>
+  </nav>
+
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <div class="section-label">GET IN TOUCH</div>
+      <h1>Let's <span class="gold">Connect</span></h1>
+    </div>
+  </section>
+
+  <section class="contact-section">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h2>Ready to <span class="gold">Start?</span></h2>
+        <p>Whether you have questions about the masterclass, want to discuss group enrollment, or are interested in speaking or consulting services — reach out. We'd love to hear from you.</p>
+        <div class="contact-details">
+          <div class="contact-item">
+            <span class="contact-icon">✉</span>
+            <span>your@email.com<br/><small>Update with your actual email</small></span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">✦</span>
+            <span>Response within 48 hours</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-wrap">
+        <div class="contact-form">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="Your full name"/>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="your@email.com"/>
+          </div>
+          <div class="form-group">
+            <label for="org">Organization (optional)</label>
+            <input type="text" id="org" placeholder="Your organization name"/>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" rows="5" placeholder="Tell us how we can help..."></textarea>
+          </div>
+          <button class="btn-primary large" onclick="handleSubmit()">Send Message</button>
+          <p class="form-note" id="form-note"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-logo-text">THE BUCK $TARTS HERE</div>
+    <div class="footer-sub">Grant Writing Masterclass</div>
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="courses.html">Courses</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Terms of Use</a>
+    </nav>
+    <div class="footer-copy">© 2025 The Buck $tarts Here. All Rights Reserved. No part of this content may be reproduced or distributed without prior written permission.</div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    function handleSubmit() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+      const note = document.getElementById('form-note');
+      if (!name || !email || !message) {
+        note.textContent = 'Please fill in all required fields.';
+        note.style.color = '#e55';
+        return;
+      }
+      note.textContent = 'Thank you! We will be in touch within 48 hours.';
+      note.style.color = '#D4AF37';
+    }
+  </script>
+</body>
+</html>

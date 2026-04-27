@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Courses | The Buck $tarts Here</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-logo">
+      <svg viewBox="0 0 200 200" class="nav-svg" aria-label="The Buck $tarts Here logo">
+        <circle cx="100" cy="100" r="94" fill="none" stroke="#D4AF37" stroke-width="3"/>
+        <circle cx="100" cy="100" r="87" fill="none" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.5"/>
+        <defs>
+          <path id="nc-top3" d="M 51,100 A 49,49 0 0,1 149,100"/>
+          <path id="nc-bot3" d="M 53,108 A 47,47 0 0,0 147,108"/>
+        </defs>
+        <text font-family="Georgia,serif" font-size="7.5" font-weight="700" fill="#D4AF37" letter-spacing="2">
+          <textPath href="#nc-top3" startOffset="50%" text-anchor="middle">✦ ✦ ✦ ✦ ✦ ✦ ✦</textPath>
+        </text>
+        <text font-family="Georgia,serif" font-size="6" fill="#D4AF37" letter-spacing="3.5">
+          <textPath href="#nc-bot3" startOffset="50%" text-anchor="middle">GRANT WRITING MASTERCLASS</textPath>
+        </text>
+        <line x1="62" y1="78" x2="138" y2="78" stroke="#D4AF37" stroke-width="0.7" opacity="0.7"/>
+        <line x1="62" y1="120" x2="138" y2="120" stroke="#D4AF37" stroke-width="0.7" opacity="0.7"/>
+        <text x="100" y="76" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="#D4AF37" letter-spacing="4">THE</text>
+        <text x="100" y="95" text-anchor="middle" font-family="Georgia,serif" font-size="19" font-weight="700" fill="#fff" letter-spacing="2">BUCK</text>
+        <text x="100" y="113" text-anchor="middle" font-family="Georgia,serif" font-weight="700">
+          <tspan font-size="22" fill="#D4AF37">$</tspan><tspan font-size="15" fill="#fff" letter-spacing="1">TARTS</tspan>
+        </text>
+        <text x="100" y="129" text-anchor="middle" font-family="Georgia,serif" font-size="15" font-weight="700" fill="#fff" letter-spacing="3">HERE</text>
+      </svg>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="courses.html" class="active">Courses</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="courses.html" class="nav-cta">Enroll Now</a></li>
+    </ul>
+    <button class="hamburger" aria-label="Menu">&#9776;</button>
+  </nav>
+
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <div class="section-label">ENROLLMENT</div>
+      <h1>The Grant Writing <span class="gold">Masterclass</span></h1>
+    </div>
+  </section>
+
+  <!-- COURSE CARD -->
+  <section class="courses-section">
+    <div class="course-card-large">
+      <div class="course-badge">FLAGSHIP COURSE</div>
+      <h2>The Buck $tarts Here<br/><span class="gold">Grant Writing Masterclass</span></h2>
+      <p class="course-tagline">Taught live for years. Proven in the room. Now available to you online.</p>
+
+      <div class="course-includes">
+        <div class="section-label" style="margin-bottom:1.5rem;">WHAT'S INCLUDED</div>
+        <div class="includes-grid">
+          <div class="include-item"><span class="gold">✦</span> Finding the right grants for your organization</div>
+          <div class="include-item"><span class="gold">✦</span> Writing proposals that get approved</div>
+          <div class="include-item"><span class="gold">✦</span> Building long-term funder relationships</div>
+          <div class="include-item"><span class="gold">✦</span> Sustaining a repeatable funding pipeline</div>
+          <div class="include-item"><span class="gold">✦</span> Real-world examples and templates</div>
+          <div class="include-item"><span class="gold">✦</span> Proven methodology from years of live teaching</div>
+        </div>
+      </div>
+
+      <div class="course-actions">
+        <a href="#enroll" class="btn-primary large">Enroll Now</a>
+        <p class="course-note">Course hosted on Udemy. You will be redirected to complete enrollment.</p>
+      </div>
+    </div>
+
+    <!-- ENROLL SECTION -->
+    <div class="enroll-section" id="enroll">
+      <div class="section-label">READY TO START?</div>
+      <h2>Choose Your <span class="gold">Path</span></h2>
+      <div class="enroll-options">
+        <div class="enroll-card">
+          <div class="enroll-platform">via Udemy</div>
+          <h3>Self-Paced Online Course</h3>
+          <p>Access the full Grant Writing Masterclass on Udemy. Learn at your own pace with lifetime access.</p>
+          <a href="https://www.udemy.com" target="_blank" class="btn-primary">Enroll on Udemy</a>
+          <p class="enroll-note">* Update this link with your actual Udemy course URL</p>
+        </div>
+        <div class="enroll-card featured-enroll">
+          <div class="enroll-platform gold">Direct Enrollment</div>
+          <h3>Premium Access</h3>
+          <p>Enroll directly and get exclusive access to additional resources, templates, and direct support.</p>
+          <a href="contact.html" class="btn-primary">Contact for Details</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-logo-text">THE BUCK $TARTS HERE</div>
+    <div class="footer-sub">Grant Writing Masterclass</div>
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="courses.html">Courses</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Terms of Use</a>
+    </nav>
+    <div class="footer-copy">© 2025 The Buck $tarts Here. All Rights Reserved. No part of this content may be reproduced or distributed without prior written permission.</div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
