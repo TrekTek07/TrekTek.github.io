@@ -1,42 +1,46 @@
-<svg width="2000" height="2200" viewBox="0 0 2000 2200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="2000" height="2200" fill="#111111"/>
+<svg width="680" height="680" viewBox="0 0 680 680" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>The Buck $tarts Here - Grant Writing Masterclass Logo</title>
+  <desc>Circular logo with gold ring, stars arc at top, curved text at bottom</desc>
 
-  <!-- Outer rings -->
-  <circle cx="1000" cy="1050" r="576" fill="none" stroke="#D4AF37" stroke-width="7"/>
-  <circle cx="1000" cy="1050" r="530" fill="none" stroke="#D4AF37" stroke-width="2" stroke-dasharray="12,9" opacity="0.5"/>
+  <rect width="680" height="680" fill="#1a1710"/>
 
-  <!-- Cardinal stars -->
-  <text x="1000" y="484" text-anchor="middle" font-family="Georgia, serif" font-size="38" fill="#D4AF37">★</text>
-  <text x="428"  y="1058" text-anchor="middle" font-family="Georgia, serif" font-size="38" fill="#D4AF37">★</text>
-  <text x="1572" y="1058" text-anchor="middle" font-family="Georgia, serif" font-size="38" fill="#D4AF37">★</text>
+  <circle cx="340" cy="340" r="295" fill="none" stroke="#c9a84c" stroke-width="3"/>
+  <circle cx="340" cy="340" r="275" fill="#1a1710" stroke="#c9a84c" stroke-width="1.5"/>
+  <circle cx="340" cy="340" r="258" fill="none" stroke="#c9a84c" stroke-width="1" stroke-dasharray="4,5"/>
 
-  <defs>
-    <path id="topArc"    d="M 524,1050 A 476,476 0 0,1 1476,1050"/>
-    <path id="bottomArc" d="M 660,1270 A 360,360 0 0,0 1340,1270"/>
-  </defs>
+  <g fill="#c9a84c">
+    <polygon points="340,112 342.6,119.6 350.5,119.6 344.2,124.1 346.7,131.7 340,127.3 333.3,131.7 335.8,124.1 329.5,119.6 337.4,119.6" />
+    <polygon points="250.5,131 253.1,138.6 261,138.6 254.7,143.1 257.2,150.7 250.5,146.3 243.8,150.7 246.3,143.1 240,138.6 247.9,138.6" />
+    <polygon points="429.5,131 432.1,138.6 440,138.6 433.7,143.1 436.2,150.7 429.5,146.3 422.8,150.7 425.3,143.1 419,138.6 426.9,138.6" />
+    <polygon points="179.1,182 181.7,189.6 189.6,189.6 183.3,194.1 185.8,201.7 179.1,197.3 172.4,201.7 174.9,194.1 168.6,189.6 176.5,189.6" />
+    <polygon points="500.9,182 503.5,189.6 511.4,189.6 505.1,194.1 507.6,201.7 500.9,197.3 494.2,201.7 496.7,194.1 490.4,189.6 498.3,189.6" />
+    <polygon points="140.6,239 143.2,246.6 151.1,246.6 144.8,251.1 147.3,258.7 140.6,254.3 133.9,258.7 136.4,251.1 130.1,246.6 138,246.6" />
+    <polygon points="539.4,239 542,246.6 549.9,246.6 543.6,251.1 546.1,258.7 539.4,254.3 532.7,258.7 535.2,251.1 528.9,246.6 536.8,246.6" />
+  </g>
 
-  <!-- Top ornamental dots -->
-  <text font-family="Georgia, serif" font-size="52" font-weight="700" fill="#D4AF37" letter-spacing="8" opacity="0.85">
-    <textPath href="#topArc" startOffset="50%" text-anchor="middle">✦ ✦ ✦ ✦ ✦ ✦ ✦</textPath>
+  <line x1="210" y1="242" x2="285" y2="242" stroke="#c9a84c" stroke-width="1.5"/>
+  <line x1="395" y1="242" x2="470" y2="242" stroke="#c9a84c" stroke-width="1.5"/>
+  <text x="340" y="250" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="white" letter-spacing="8">THE</text>
+
+  <text x="340" y="316" text-anchor="middle" font-family="Georgia, serif" font-size="82" fill="white" font-weight="700" letter-spacing="2">BUCK</text>
+
+  <text x="340" y="386" text-anchor="middle" font-family="Georgia, serif" font-weight="700">
+    <tspan font-size="82" fill="#c9a84c" dy="0">$</tspan><tspan font-size="68" fill="white" letter-spacing="2" dy="0">TARTS</tspan>
   </text>
 
-  <!-- GRANT WRITING MASTERCLASS — bottom arc, well inside circle -->
-  <text font-family="Georgia, serif" font-size="48" fill="#D4AF37" letter-spacing="10">
+  <line x1="192" y1="412" x2="268" y2="412" stroke="#c9a84c" stroke-width="2"/>
+  <line x1="412" y1="412" x2="488" y2="412" stroke="#c9a84c" stroke-width="2"/>
+
+  <text x="340" y="474" text-anchor="middle" font-family="Georgia, serif" font-size="82" fill="white" font-weight="700" letter-spacing="2">HERE</text>
+
+  <line x1="192" y1="484" x2="268" y2="484" stroke="#c9a84c" stroke-width="2"/>
+  <line x1="412" y1="484" x2="488" y2="484" stroke="#c9a84c" stroke-width="2"/>
+
+  <defs>
+    <path id="bottomArc" d="M 92,340 A 248,248 0 0,0 588,340" />
+  </defs>
+  <text font-family="Arial, sans-serif" font-size="17" fill="#c9a84c" letter-spacing="6" font-weight="500">
     <textPath href="#bottomArc" startOffset="50%" text-anchor="middle">GRANT WRITING MASTERCLASS</textPath>
   </text>
 
-  <!-- Divider lines -->
-  <line x1="640"  y1="808"  x2="1360" y2="808"  stroke="#D4AF37" stroke-width="2.5" opacity="0.7"/>
-  <line x1="640"  y1="1210" x2="1360" y2="1210" stroke="#D4AF37" stroke-width="2.5" opacity="0.7"/>
-
-  <!-- Stacked name text -->
-  <text x="1000" y="800"  text-anchor="middle" font-family="Georgia, serif" font-size="52"  fill="#D4AF37" letter-spacing="18">THE</text>
-  <text x="1000" y="950"  text-anchor="middle" font-family="Georgia, serif" font-size="170" font-weight="700" fill="#FFFFFF" letter-spacing="10">BUCK</text>
-  <text x="1000" y="1100" text-anchor="middle" font-family="Georgia, serif" font-weight="700">
-    <tspan font-size="195" fill="#D4AF37">$</tspan><tspan font-size="130" fill="#FFFFFF" letter-spacing="6">TARTS</tspan>
-  </text>
-  <text x="1000" y="1205" text-anchor="middle" font-family="Georgia, serif" font-size="130" font-weight="700" fill="#FFFFFF" letter-spacing="14">HERE</text>
-
-  <!-- Copyright -->
-  <text x="1000" y="2140" text-anchor="middle" font-family="Georgia, serif" font-size="36" fill="#777" letter-spacing="6">© 2025 THE BUCK $TARTS HERE · ALL RIGHTS RESERVED</text>
 </svg>
