@@ -874,3 +874,5 @@ body {
 
   .legal-section { padding: 5rem 2rem; }
 }
+
+.faq-item{border:1px solid rgba(212,175,55,.2);padding:20px;margin:20px 0;border-radius:4px;}
