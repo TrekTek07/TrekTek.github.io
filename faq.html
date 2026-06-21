@@ -1,37 +1,709 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Buck Starts Here Academy | FAQ</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FAQ | The Buck $tarts Here</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── FAQ FUNNEL STYLES ── */
+    .faq-hero { background:#1a1710; padding:140px 10% 60px; text-align:center; border-bottom:1px solid #c9a84c33; }
+    .faq-hero h1 { font-family:'Cinzel',serif; font-size:clamp(2rem,4vw,3rem); color:#fff; margin-bottom:1rem; }
+    .faq-hero p { color:#aaa; font-family:'Montserrat',sans-serif; font-size:1.05rem; max-width:600px; margin:0 auto; }
+
+    /* Featured video */
+    .featured-video-section { background:#111008; padding:60px 10%; text-align:center; border-bottom:1px solid #c9a84c22; }
+    .featured-video-section .section-label { margin-bottom:1rem; }
+    .featured-video-section h2 { font-family:'Cinzel',serif; color:#fff; font-size:1.6rem; margin-bottom:0.5rem; }
+    .featured-video-section p { color:#aaa; font-family:'Montserrat',sans-serif; margin-bottom:2rem; }
+    .video-embed-placeholder { background:#0d0b07; border:1px solid #c9a84c44; border-radius:8px; max-width:720px; margin:0 auto; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1rem; }
+    .video-embed-placeholder .play-icon { width:64px; height:64px; background:#c9a84c22; border:2px solid #c9a84c; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#c9a84c; }
+    .video-embed-placeholder p { color:#666; font-family:'Montserrat',sans-serif; font-size:0.85rem; margin:0; }
+    .video-embed-placeholder strong { color:#c9a84c; display:block; font-family:'Cinzel',serif; font-size:0.95rem; }
+
+    /* Category nav */
+    .faq-category-nav { background:#1a1710; padding:30px 10%; border-bottom:1px solid #c9a84c22; }
+    .faq-category-nav h3 { font-family:'Montserrat',sans-serif; color:#c9a84c; font-size:0.75rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:1rem; }
+    .category-tabs { display:flex; flex-wrap:wrap; gap:0.75rem; }
+    .cat-tab { padding:0.5rem 1.2rem; border:1px solid #c9a84c55; border-radius:30px; color:#c9a84c; font-family:'Montserrat',sans-serif; font-size:0.85rem; cursor:pointer; transition:all 0.2s; background:transparent; text-decoration:none; }
+    .cat-tab:hover, .cat-tab.active { background:#c9a84c; color:#1a1710; font-weight:600; }
+
+    /* FAQ sections */
+    .faq-body { background:#13110a; padding:60px 10%; }
+    .faq-category-section { margin-bottom:60px; }
+    .faq-category-section h2 { font-family:'Cinzel',serif; color:#c9a84c; font-size:1.3rem; border-bottom:1px solid #c9a84c33; padding-bottom:0.75rem; margin-bottom:2rem; letter-spacing:1px; }
+
+    .faq-item { background:#1a1710; border:1px solid #c9a84c22; border-radius:8px; margin-bottom:1.25rem; overflow:hidden; transition:border-color 0.2s; }
+    .faq-item:hover { border-color:#c9a84c55; }
+    .faq-question { display:flex; justify-content:space-between; align-items:center; padding:1.25rem 1.5rem; cursor:pointer; gap:1rem; }
+    .faq-question h3 { font-family:'Libre Baskerville',serif; color:#fff; font-size:1rem; margin:0; font-weight:400; }
+    .faq-toggle { color:#c9a84c; font-size:1.3rem; flex-shrink:0; transition:transform 0.3s; line-height:1; }
+    .faq-item.open .faq-toggle { transform:rotate(45deg); }
+
+    .faq-answer { max-height:0; overflow:hidden; transition:max-height 0.4s ease; }
+    .faq-item.open .faq-answer { max-height:800px; }
+    .faq-answer-inner { padding:0 1.5rem 1.5rem; }
+    .faq-answer-inner p { color:#bbb; font-family:'Montserrat',sans-serif; font-size:0.92rem; line-height:1.75; margin-bottom:1rem; }
+
+    /* Video placeholder inside FAQ */
+    .faq-video-placeholder { background:#0d0b07; border:1px solid #c9a84c33; border-radius:6px; padding:1.5rem; text-align:center; margin-bottom:1rem; }
+    .faq-video-placeholder p { color:#555; font-size:0.8rem; margin:0.5rem 0 0; }
+    .faq-video-placeholder strong { color:#c9a84c; font-family:'Cinzel',serif; font-size:0.85rem; display:block; margin-bottom:0.25rem; }
+    .faq-video-btn { display:inline-flex; align-items:center; gap:0.5rem; color:#c9a84c; font-family:'Montserrat',sans-serif; font-size:0.8rem; border:1px solid #c9a84c44; padding:0.4rem 0.9rem; border-radius:20px; margin-top:0.5rem; cursor:pointer; }
+
+    /* Mid-funnel CTA strip */
+    .faq-mid-cta { background:#0d0b07; border-top:1px solid #c9a84c33; border-bottom:1px solid #c9a84c33; padding:40px 10%; text-align:center; margin:0; }
+    .faq-mid-cta p { color:#aaa; font-family:'Montserrat',sans-serif; margin-bottom:1.25rem; }
+    .faq-mid-cta h3 { font-family:'Cinzel',serif; color:#fff; font-size:1.3rem; margin-bottom:0.5rem; }
+
+    /* Grant Readiness Assessment */
+    .assessment-section { background:#1a1710; padding:70px 10%; }
+    .assessment-inner { max-width:680px; margin:0 auto; }
+    .assessment-inner .section-label { margin-bottom:1rem; }
+    .assessment-inner h2 { font-family:'Cinzel',serif; color:#fff; font-size:clamp(1.4rem,3vw,2rem); margin-bottom:0.75rem; }
+    .assessment-inner > p { color:#aaa; font-family:'Montserrat',sans-serif; margin-bottom:2rem; }
+
+    .assessment-step { display:none; }
+    .assessment-step.active { display:block; }
+    .assessment-question { font-family:'Libre Baskerville',serif; color:#fff; font-size:1.1rem; margin-bottom:1.5rem; }
+    .assessment-question span { color:#c9a84c; font-size:0.8rem; font-family:'Montserrat',sans-serif; display:block; margin-bottom:0.5rem; letter-spacing:1px; text-transform:uppercase; }
+
+    .assessment-options { display:flex; flex-direction:column; gap:0.75rem; margin-bottom:2rem; }
+    .assessment-option { background:#13110a; border:1px solid #c9a84c33; border-radius:6px; padding:1rem 1.25rem; cursor:pointer; color:#ccc; font-family:'Montserrat',sans-serif; font-size:0.92rem; transition:all 0.2s; text-align:left; }
+    .assessment-option:hover { border-color:#c9a84c; color:#fff; background:#1f1c12; }
+    .assessment-option.selected { border-color:#c9a84c; background:#c9a84c15; color:#fff; }
+
+    .assessment-progress { display:flex; gap:6px; margin-bottom:2rem; }
+    .progress-dot { width:8px; height:8px; border-radius:50%; background:#333; transition:background 0.3s; }
+    .progress-dot.done { background:#c9a84c; }
+
+    .score-result { text-align:center; padding:2rem 0; }
+    .score-circle { width:120px; height:120px; border-radius:50%; border:3px solid #c9a84c; margin:0 auto 1.5rem; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#0d0b07; }
+    .score-number { font-family:'Cinzel',serif; color:#c9a84c; font-size:2rem; font-weight:700; line-height:1; }
+    .score-label { color:#888; font-family:'Montserrat',sans-serif; font-size:0.7rem; letter-spacing:1px; text-transform:uppercase; }
+    .score-message { font-family:'Libre Baskerville',serif; color:#fff; font-size:1.15rem; margin-bottom:0.75rem; }
+    .score-sub { color:#aaa; font-family:'Montserrat',sans-serif; font-size:0.9rem; margin-bottom:2rem; }
+    .score-actions { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; }
+
+    /* Bottom enroll CTA */
+    .faq-enroll-cta { background:#0d0b07; padding:80px 10%; text-align:center; border-top:1px solid #c9a84c33; }
+    .faq-enroll-cta h2 { font-family:'Cinzel',serif; color:#fff; font-size:clamp(1.5rem,3vw,2.2rem); margin-bottom:1rem; }
+    .faq-enroll-cta p { color:#aaa; font-family:'Montserrat',sans-serif; max-width:560px; margin:0 auto 2rem; }
+    .cta-buttons { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; }
+
+    /* Responsive */
+    @media(max-width:600px) {
+      .category-tabs { gap:0.5rem; }
+      .cat-tab { font-size:0.75rem; padding:0.4rem 0.9rem; }
+    }
+  </style>
 </head>
 <body>
-<nav class="navbar"><div class="nav-logo"><a href="index.html" style="color:#D4AF37;text-decoration:none;">THE BUCK STARTS HERE</a></div>
-<ul class="nav-links">
-<li><a href="index.html">Home</a></li>
-<li><a href="about.html">About</a></li>
-<li><a href="courses.html">Courses</a></li>
-<li><a href="faq.html" class="active">FAQ</a></li>
-<li><a href="contact.html">Contact</a></li>
-</ul></nav>
 
-<section style="padding:140px 10% 60px;">
-<h1>The Buck Starts Here FAQ Center</h1>
-<p>Get answers from our Grant Coach and explore the Masterclass.</p>
+  <nav class="navbar">
+    <div class="nav-logo">
+      <svg viewBox="0 0 200 200" class="nav-svg" aria-label="The Buck $tarts Here logo">
+        <rect width="200" height="200" fill="#1a1710"/>
+        <circle cx="100" cy="100" r="86" fill="none" stroke="#c9a84c" stroke-width="0.9"/>
+        <circle cx="100" cy="100" r="80" fill="#1a1710" stroke="#c9a84c" stroke-width="0.44"/>
+        <circle cx="100" cy="100" r="75" fill="none" stroke="#c9a84c" stroke-width="0.29" stroke-dasharray="4,5"/>
+        <g fill="#c9a84c">
+          <polygon points="100,33 100.8,35.2 103.2,35.2 101.4,36.5 102.1,38.7 100,37.4 97.9,38.7 98.6,36.5 96.8,35.2 99.2,35.2"/>
+          <polygon points="73.7,38.5 74.5,40.7 76.9,40.7 75.1,42 75.8,44.2 73.7,42.9 71.6,44.2 72.3,42 70.5,40.7 72.9,40.7"/>
+          <polygon points="126.3,38.5 127.1,40.7 129.5,40.7 127.7,42 128.4,44.2 126.3,42.9 124.2,44.2 124.9,42 123.1,40.7 125.5,40.7"/>
+          <polygon points="52.6,53.5 53.4,55.7 55.8,55.7 54,57 54.7,59.2 52.6,57.9 50.5,59.2 51.2,57 49.4,55.7 51.8,55.7"/>
+          <polygon points="147.4,53.5 148.2,55.7 150.6,55.7 148.8,57 149.5,59.2 147.4,57.9 145.3,59.2 146,57 144.2,55.7 146.6,55.7"/>
+          <polygon points="41.2,70.3 42,72.5 44.4,72.5 42.6,73.8 43.3,76 41.2,74.7 39.1,76 39.8,73.8 38,72.5 40.4,72.5"/>
+          <polygon points="158.8,70.3 159.6,72.5 162,72.5 160.2,73.8 160.9,76 158.8,74.7 156.7,76 157.4,73.8 155.6,72.5 158,72.5"/>
+        </g>
+        <line x1="61.8" y1="71.2" x2="83.8" y2="71.2" stroke="#c9a84c" stroke-width="0.44"/>
+        <line x1="116.2" y1="71.2" x2="138.2" y2="71.2" stroke="#c9a84c" stroke-width="0.44"/>
+        <text x="100" y="73.5" text-anchor="middle" font-family="Georgia,serif" font-size="6.5" fill="white" letter-spacing="2.3">THE</text>
+        <text x="100" y="92.8" text-anchor="middle" font-family="Georgia,serif" font-size="24" fill="white" font-weight="700" letter-spacing="0.6">BUCK</text>
+        <text x="100" y="113.3" text-anchor="middle" font-family="Georgia,serif" font-weight="700">
+          <tspan font-size="24" fill="#c9a84c" dy="0">$</tspan><tspan font-size="20" fill="white" letter-spacing="0.6" dy="0">TARTS</tspan>
+        </text>
+        <line x1="56.5" y1="121" x2="78.8" y2="121" stroke="#c9a84c" stroke-width="0.59"/>
+        <line x1="121.2" y1="121" x2="143.5" y2="121" stroke="#c9a84c" stroke-width="0.59"/>
+        <text x="100" y="139.1" text-anchor="middle" font-family="Georgia,serif" font-size="24" fill="white" font-weight="700" letter-spacing="0.6">HERE</text>
+        <line x1="56.5" y1="142" x2="78.8" y2="142" stroke="#c9a84c" stroke-width="0.59"/>
+        <line x1="121.2" y1="142" x2="143.5" y2="142" stroke="#c9a84c" stroke-width="0.59"/>
+        <defs><path id="nc-bot-FAQ" d="M 27,100 A 73,73 0 0,0 173,100"/></defs>
+        <text font-family="Arial,sans-serif" font-size="5" fill="#c9a84c" letter-spacing="1.8" font-weight="500">
+          <textPath href="#nc-bot-FAQ" startOffset="50%" text-anchor="middle">GRANT WRITING MASTERCLASS</textPath>
+        </text>
+      </svg>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="faq.html" class="active">FAQ</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="courses.html" class="nav-cta">Enroll Now</a></li>
+    </ul>
+    <button class="hamburger" aria-label="Menu">&#9776;</button>
+  </nav>
 
-<h2>Featured Video</h2>
-<p>Embed your HeyGen FAQ video here.</p>
+  <!-- HERO -->
+  <section class="faq-hero">
+    <div class="section-label">GRANT COACH ANSWERS</div>
+    <h1>Everything You Need to Know About <span class="gold">Grant Funding</span></h1>
+    <p>Get clear answers to the most common questions about grants, proposals, and what it takes to secure real funding — answered by your instructor, Gayle Lynn.</p>
+  </section>
 
-<div class="faq-item"><h3>What is a grant?</h3><p>Add your HeyGen video embed and transcript.</p></div>
-<div class="faq-item"><h3>Can I really get funding for my idea?</h3><p>Add video embed.</p></div>
-<div class="faq-item"><h3>Why do most grant applications get rejected?</h3><p>Add video embed.</p></div>
-<div class="faq-item"><h3>What if I've already been rejected before?</h3><p>Add video embed.</p></div>
-<div class="faq-item"><h3>How do I find grants I qualify for?</h3><p>Add video embed.</p></div>
+  <!-- FEATURED VIDEO -->
+  <section class="featured-video-section">
+    <div class="section-label">QUESTION OF THE WEEK</div>
+    <h2>Why Do Most Grant Applications Get Rejected?</h2>
+    <p>Watch Gayle Lynn answer the question most applicants never think to ask.</p>
+    <div class="video-embed-placeholder">
+      <div class="play-icon">▶</div>
+      <iframe width="560" height="315" src="https://app.heygen.com/embeds/42ac3855e3294f008be31b482715c199" title="Why do most grant applications get rejected?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe></p>
+    </div>
+  </section>
 
-<h2>Grant Readiness Assessment</h2>
-<p>Coming soon: interactive assessment funnel.</p>
+  <!-- CATEGORY TABS -->
+  <div class="faq-category-nav">
+    <h3>Jump to a category</h3>
+    <div class="category-tabs">
+      <a href="#getting-started" class="cat-tab">Getting Started</a>
+      <a href="#grant-strategy" class="cat-tab">Grant Strategy</a>
+      <a href="#application-success" class="cat-tab">Application Success</a>
+      <a href="#masterclass" class="cat-tab">The Masterclass</a>
+    </div>
+  </div>
 
-<p><a class="btn-primary" href="courses.html">Enroll in the Masterclass</a></p>
-</section>
-</body></html>
+  <!-- FAQ BODY -->
+  <section class="faq-body">
+
+    <!-- STAGE 1: GETTING STARTED -->
+    <div class="faq-category-section" id="getting-started">
+      <h2>✦ Getting Started</h2>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>What is a grant?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "What Is a Grant?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/dd09bad7d535416da837b9b98624824f" title="What is a Grant" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe></p>
+            </div>
+            <p>A grant is funding that does not need to be repaid. It is typically awarded by government agencies, foundations, or organizations to support projects that serve the public good.</p>
+            <p>The key is this: grants are competitive, and most applications fail not because of bad ideas, but because of poor structure and missing requirements.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>Can I really get funding for my idea?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "Can I Really Get Funding?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/200c0ef231d94b43a7bee62fa655b94d" title="Can I really get funding for my idea?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>Yes — but funding is not given for ideas alone. It is given for structured, measurable projects with a clear impact.</p>
+            <p>If you can clearly define your purpose, your outcomes, and your budget, you are already ahead of most applicants.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>Why do most grant applications get rejected?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "Why Do Most Grant Applications Get Rejected"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/42ac3855e3294f008be31b482715c199" title="Why do most grant applications get rejected?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>Most grant applications are rejected for three reasons: unclear goals, weak budgeting, and failure to follow instructions exactly.</p>
+            <p>The good news is that all three of these are fixable with the right system.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>Who can apply for grants?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "Who Can Apply for Grants?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/099f096042dd4c91b53fb4b250d4806c" title="Who can apply for grants?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>Grants are available for nonprofits, schools, community organizations, researchers, and in some cases small businesses or individuals with public-benefit projects.</p>
+            <p>The key factor is not who you are — it's how your project serves a broader need.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>What types of projects get funded the most?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "What Gets Funded Most?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/25d869cff44248c88fcdf8c4531c16b6" title="What types of projects get funded the most?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>Some of the most commonly funded projects focus on education, workforce development, community services, health initiatives, youth programs, housing, environmental projects, and economic development.</p>
+            <p>Funders are looking for projects that address real needs, demonstrate measurable impact, and provide clear benefits to the communities they serve.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MID-FUNNEL CTA #1 -->
+    <div class="faq-mid-cta">
+      <h3>Still Have Questions?</h3>
+      <p>The Masterclass answers all of this — and walks you through building a complete, fundable proposal step by step.</p>
+      <a href="courses.html" class="btn-primary">See What's Inside the Masterclass</a>
+    </div>
+
+    <!-- STAGE 2: GRANT STRATEGY -->
+    <div class="faq-category-section" id="grant-strategy" style="margin-top:60px;">
+      <h2>✦ Grant Strategy</h2>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>What makes a strong grant proposal?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "What Makes a Strong Proposal?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/100482a8783749cb82ecb45b8ccee22a" title="What makes a strong grant proposal?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>A strong grant proposal has five parts: a clear problem statement, defined objectives, a realistic budget, measurable outcomes, and alignment with the funder's mission.</p>
+            <p>When these five elements are aligned, your chances of approval increase significantly.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>How much money can I realistically get?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "How Much Can I Get?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/bb6c62301184437082660a27dd74d30a" title="How much money can I realistically get?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>Grant amounts vary widely — from a few thousand dollars to several hundred thousand or more.</p>
+            <p>What matters most is not the size of the grant, but how well your project matches the funding priorities of the organization.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>How long does it take to get funding?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "How Long Does It Take?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/fe97ed82289546159642ddf803964596" title="How long does it take to get funding?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>Most grants take anywhere from 30 days to 6 months to process, depending on the funding source.</p>
+            <p>Government grants usually take longer, while private foundations can move faster.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>How do I find grants I actually qualify for?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "Finding Grants You Qualify For"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/9dfa44a878564df3b3c472b4c515f824" title="How do I find grants I actually qualify for?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>One of the biggest mistakes applicants make is applying for every grant they find. Successful grant seekers focus on opportunities that closely match their mission, project goals, location, and target audience.</p>
+            <p>Qualification starts with understanding eligibility requirements, funding priorities, geographic restrictions, and application criteria. Inside the Buck $tarts Here Grant Writing Masterclass, you'll learn a systematic approach to identifying opportunities that are worth your time and effort.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>Can grants replace my job income?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "Can Grants Replace Income?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/b4098d5423664031b8a1e7553cb30b66" title="Can grants replace my job income?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>Grants are generally designed to fund projects, programs, research, education, or community initiatives — not personal living expenses.</p>
+            <p>However, grants can support salaries, staffing, consultants, and operational expenses when those costs are directly related to an approved project. Many organizations use grant funding to create positions, expand services, and increase revenue opportunities.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: APPLICATION SUCCESS -->
+    <div class="faq-category-section" id="application-success">
+      <h2>✦ Application Success</h2>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>Do I need experience to write grants?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "Do I Need Experience?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/2f09dc8842344535bbda074d52114d90" title="Do I need experience to write grants?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>No prior experience is required, but structure is essential.</p>
+            <p>Once you understand the format and expectations, you can write competitive applications even as a beginner.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>What is the biggest mistake beginners make?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "Biggest Beginner Mistakes"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/06650b53fd6c45a782fedacf61667f60" title="What is the biggest mistake beginners make?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>The biggest mistake is writing about personal need instead of measurable impact.</p>
+            <p>Funders are not just investing in you — they are investing in outcomes and results.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>What if I've already been rejected before?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "What If I've Been Rejected?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/f88d36dfa0304294ad851ab33301beba" title="What if I've already been rejected before?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>If you've been rejected before, you're not alone. Most successful grant recipients have experienced rejection at some point in the process.</p>
+            <p>A rejection does not mean your project wasn't worthy. In many cases, it means the proposal did not align with the funder's priorities, lacked sufficient detail, or failed to demonstrate measurable outcomes.</p>
+            <p>Every rejection contains valuable lessons. Inside the Masterclass, you'll learn how to identify common weaknesses and strengthen future applications to improve your chances of success.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>What documents do I need before applying?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "Documents You'll Need"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/1421da489fee4b7d8591ff0e9d9475b7" title="What documents do I need before applying?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>Most applications require a project description, budget, timeline, organizational information, proof of nonprofit status if applicable, financial statements, and supporting documentation related to your project.</p>
+            <p>Preparing these materials in advance can significantly reduce stress and improve the quality of your application. The Masterclass includes guidance on organizing everything funders expect to see.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MID-FUNNEL CTA #2 -->
+    <div class="faq-mid-cta">
+      <h3>Ready to Stop Guessing?</h3>
+      <p>Take the Grant Readiness Assessment below and find out exactly where you stand — and what to do next.</p>
+      <a href="#assessment" class="btn-primary">Take the Free Assessment ↓</a>
+    </div>
+
+    <!-- STAGE 4: MASTERCLASS QUESTIONS -->
+    <div class="faq-category-section" id="masterclass" style="margin-top:60px;">
+      <h2>✦ About the Masterclass</h2>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>What is The Buck $tarts Here Grant Writing Masterclass?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "What Is the Masterclass?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/be15c6f521864d1cabda14f360dd9949" title="What is The Buck Starts Here Grant Writing Masterclass" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>The Buck $tarts Here Masterclass is a step-by-step training program that shows you how to structure winning grant applications from start to finish.</p>
+            <p>It breaks down real examples, templates, and strategies used in successful funding proposals — developed and taught live for years by Gayle Lynn before becoming available online.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>What will I actually learn inside the course?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "What You'll Learn"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/8fd9a446fab54b37917abbbfa9344990" title="What will I actually learn inside the course?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>You will learn how to identify funding opportunities, structure your proposal, write compelling narratives, build budgets, and avoid the most common rejection mistakes.</p>
+            <p>The goal is to give you a repeatable system you can use for multiple grant applications.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>Is this course beginner friendly?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "Beginner Friendly"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/1a16a1de061d45fe8e7c3ae5f0542f2f" title="Is this course beginner friendly?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>Yes. It is designed for beginners as well as those who have tried and failed before. Everything is broken down into simple, repeatable steps so you can follow along even without prior experience.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>How is this different from free YouTube videos?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+
+            <div class="faq-video-placeholder">
+              <strong>Video: "Beginner Friendly"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/adf18a6f8b4f423baf74db2d61baec52" title="How is this different from free YouTube videos?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>Free content shows fragments of the process. This masterclass gives you the complete system.</p>
+            <p>Instead of guessing what to do next, you follow a structured path from idea to submission — built on years of real-world live teaching, not just theory.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>How do I get started?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <div class="faq-video-placeholder">
+              <strong>Video: "How Do I Get Started?"</strong>
+              <iframe width="560" height="315" src="https://app.heygen.com/embeds/885bf6054d3d4a2d8b78f93491eb1263" title="How do I get started?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+            </div>
+            <p>The best place to start is to enroll in The Buck $tarts Here Grant Writing Masterclass. Once inside, you'll follow a structured system that walks you through building a complete, fundable grant proposal step by step.</p>
+            <a href="https://payhip.com/b/vnOAC" target="_blank" class="btn-primary" style="display:inline-block;margin-top:1rem;">Enroll on Payhip →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- GRANT READINESS ASSESSMENT -->
+  <section class="assessment-section" id="assessment">
+    <div class="assessment-inner">
+      <div class="section-label">FREE TOOL</div>
+      <h2>Find Out If You're <span class="gold">Grant Ready</span></h2>
+      <p>Answer 4 quick questions and get your personalized Grant Readiness Score — plus a recommendation for your next step.</p>
+
+      <div class="assessment-progress" id="progress-dots">
+        <div class="progress-dot" id="dot-1"></div>
+        <div class="progress-dot" id="dot-2"></div>
+        <div class="progress-dot" id="dot-3"></div>
+        <div class="progress-dot" id="dot-4"></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="assessment-step active" id="step-1">
+        <div class="assessment-question">
+          <span>Question 1 of 4</span>
+          What type of organization are you?
+        </div>
+        <div class="assessment-options">
+          <button class="assessment-option" onclick="selectOption(this, 1, 25)">Nonprofit Organization</button>
+          <button class="assessment-option" onclick="selectOption(this, 1, 25)">School or Educational Institution</button>
+          <button class="assessment-option" onclick="selectOption(this, 1, 20)">Community Program or Initiative</button>
+          <button class="assessment-option" onclick="selectOption(this, 1, 15)">Small Business or Individual</button>
+          <button class="assessment-option" onclick="selectOption(this, 1, 10)">I'm still figuring that out</button>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="assessment-step" id="step-2">
+        <div class="assessment-question">
+          <span>Question 2 of 4</span>
+          Do you currently have a defined project with clear goals?
+        </div>
+        <div class="assessment-options">
+          <button class="assessment-option" onclick="selectOption(this, 2, 25)">Yes — I have a clear project with measurable outcomes</button>
+          <button class="assessment-option" onclick="selectOption(this, 2, 15)">Somewhat — I have an idea but need to refine it</button>
+          <button class="assessment-option" onclick="selectOption(this, 2, 5)">Not yet — I'm still in the early stages</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="assessment-step" id="step-3">
+        <div class="assessment-question">
+          <span>Question 3 of 4</span>
+          Have you applied for grants before?
+        </div>
+        <div class="assessment-options">
+          <button class="assessment-option" onclick="selectOption(this, 3, 25)">Yes — and I've been funded at least once</button>
+          <button class="assessment-option" onclick="selectOption(this, 3, 15)">Yes — but I've been rejected</button>
+          <button class="assessment-option" onclick="selectOption(this, 3, 10)">No — this would be my first application</button>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="assessment-step" id="step-4">
+        <div class="assessment-question">
+          <span>Question 4 of 4</span>
+          What is your biggest challenge right now?
+        </div>
+        <div class="assessment-options">
+          <button class="assessment-option" onclick="selectOption(this, 4, 0)">Finding grants I qualify for</button>
+          <button class="assessment-option" onclick="selectOption(this, 4, 0)">Writing a strong proposal</button>
+          <button class="assessment-option" onclick="selectOption(this, 4, 0)">Building my budget correctly</button>
+          <button class="assessment-option" onclick="selectOption(this, 4, 0)">All of the above</button>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div class="assessment-step" id="step-result">
+        <div class="score-result">
+          <div class="score-circle">
+            <div class="score-number" id="score-display">0%</div>
+            <div class="score-label">Readiness</div>
+          </div>
+          <div class="score-message" id="score-message">Calculating your score...</div>
+          <p class="score-sub" id="score-sub"></p>
+          <div class="score-actions">
+            <a href="https://payhip.com/b/vnOAC" target="_blank" class="btn-primary">Enroll in the Masterclass</a>
+            <a href="contact.html" class="btn-secondary">Talk to Gayle Directly</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="faq-enroll-cta">
+    <div class="section-label">YOUR NEXT STEP</div>
+    <h2>Every Day Without a System Is a Day Without <span class="gold">Funding</span></h2>
+    <p>The organizations that secure funding are not necessarily the most qualified. They are the most prepared. The Buck $tarts Here Masterclass gives you that preparation.</p>
+    <div class="cta-buttons">
+      <a href="https://payhip.com/b/vnOAC" target="_blank" class="btn-primary large">Enroll in the Masterclass</a>
+      <a href="courses.html" class="btn-secondary">Learn What's Inside</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-logo-text">THE BUCK $TARTS HERE</div>
+    <div class="footer-sub">Grant Writing Masterclass</div>
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="courses.html">Courses</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Terms of Use</a>
+    </nav>
+    <div class="footer-copy">© 2025 The Buck $tarts Here. All Rights Reserved.</div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    // FAQ Accordion
+    document.querySelectorAll('.faq-question').forEach(q => {
+      q.addEventListener('click', () => {
+        const item = q.parentElement;
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+
+    // Assessment logic
+    let scores = [];
+    let totalScore = 0;
+
+    function selectOption(btn, step, points) {
+      // highlight selection
+      btn.closest('.assessment-options').querySelectorAll('.assessment-option')
+        .forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      scores[step] = points;
+
+      // Mark dot done
+      const dot = document.getElementById('dot-' + step);
+      if (dot) dot.classList.add('done');
+
+      setTimeout(() => {
+        document.getElementById('step-' + step).classList.remove('active');
+        const next = step < 4 ? 'step-' + (step + 1) : 'step-result';
+        document.getElementById(next).classList.add('active');
+        if (next === 'step-result') showResult();
+      }, 350);
+    }
+
+    function showResult() {
+      totalScore = scores.reduce((a, b) => a + (b || 0), 0);
+      const pct = Math.min(totalScore, 100);
+      document.getElementById('score-display').textContent = pct + '%';
+
+      let msg, sub;
+      if (pct >= 70) {
+        msg = "You're in a strong position — now polish your approach.";
+        sub = "You have the foundation. The Masterclass will sharpen your proposal writing, budget structure, and funder alignment to move you from ready to funded.";
+      } else if (pct >= 40) {
+        msg = "You have potential — but gaps that need to be filled.";
+        sub = "The good news: these gaps are fixable. The Masterclass gives you the exact system to turn your idea into a structured, competitive proposal.";
+      } else {
+        msg = "You're just getting started — and that's the right time to learn.";
+        sub = "Starting with the right system beats learning from rejection. The Masterclass will walk you through every step from scratch.";
+      }
+      document.getElementById('score-message').textContent = msg;
+      document.getElementById('score-sub').textContent = sub;
+    }
+  </script>
+</body>
+</html>
