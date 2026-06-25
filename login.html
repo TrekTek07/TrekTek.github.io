@@ -1,6 +1,32 @@
-<!DOCTYPE html><html><body style='font-family:Arial'>
-<h2>Premium Access</h2>
-<input id='p' type='password'><button onclick="go()">Enter</button>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Premium Login - The Buck $tarts Here</title>
+<style>
+body{font-family:Arial,sans-serif;background:#0f172a;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+.box{background:#1e293b;padding:40px;border-radius:12px;border:1px solid #d4af37;text-align:center;max-width:360px}
+h2{color:#d4af37;margin-top:0}
+input{padding:10px;width:80%;border-radius:6px;border:1px solid #d4af37;margin-bottom:12px;background:#0f172a;color:#fff}
+button{padding:10px 20px;background:#d4af37;color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:600}
+.err{color:#f87171;margin-top:10px;min-height:1.2em}
+a{color:#d4af37}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>Premium Member Access</h2>
+<p>Enter your password to access the Member Center.</p>
+<input id="p" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')go()"><br>
+<button onclick="go()">Enter</button>
+<div class="err" id="err"></div>
+<p><a href="index.html">&larr; Back to site</a></p>
+</div>
 <script>
-function go(){if(document.getElementById('p').value==='BUCKSTARTS2026')location='premium.html';else alert('Incorrect password');}
-</script></body></html>
+function go(){
+  var val = document.getElementById('p').value;
+  if(val === 'BUCKSTARTS2026'){
+    sessionStorage.setItem('ttPremiumAuth','1');
+    location.href = 'premium.html';
+  } else {
+    document.getElementById('err').textContent = 'Incorrect password. Please try again.';
+  }
+}
+</script>
+</body></html>
