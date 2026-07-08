@@ -19,6 +19,19 @@ body{font-family:Arial,sans-serif;background:#0f172a;color:#fff;margin:0}
 h1,h2{color:#d4af37}
 .botpress-box{background:#111827;padding:20px;border-radius:12px;border:2px solid #d4af37}
 .download{display:inline-block;padding:10px 15px;background:#d4af37;color:#000;text-decoration:none;border-radius:6px}
+.premium-video-wrap{position:relative;width:100%;max-width:960px;margin:22px auto 0;border:2px solid #d4af37;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.premium-video-wrap iframe{display:block;width:100%;aspect-ratio:16/9;height:auto;min-height:260px}
+.upload-panel{background:#111827;border:2px dashed #d4af37;border-radius:16px;padding:24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.upload-panel.dragover{background:#172033;border-color:#f5d46b}
+.upload-panel input{display:none}
+.upload-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.gold-button,.dark-button{border:0;border-radius:8px;padding:12px 18px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.gold-button{background:#d4af37;color:#000}
+.gold-button:disabled{opacity:.45;cursor:not-allowed}
+.dark-button{background:#243145;color:#fff;border:1px solid rgba(212,175,55,.55)}
+.status-box{margin-top:18px;background:#0b1220;border:1px solid rgba(212,175,55,.35);border-radius:12px;padding:15px;text-align:left;white-space:pre-line;color:#dce7ff}
+.preview-box{margin-top:18px;background:#020617;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:15px;text-align:left;max-height:220px;overflow:auto;color:#cbd5e1;font-size:.92rem;line-height:1.55}
+.small-note{color:#cbd5e1;font-size:.95rem;line-height:1.55;max-width:850px;margin:12px auto 0}
 </style>
 </head>
 <body>
@@ -35,12 +48,32 @@ h1,h2{color:#d4af37}
 <div class="hero">
 <h1>The Buck $tarts Here™ Premium Member Center</h1>
 <p>Masterclass Resources, AI Grant Coach, Downloads, and Member Tools</p>
+<div class="premium-video-wrap">
+<iframe src="https://app.heygen.com/embeds/70aa05d339bf4804a96f545a9871c154" title="Grant Intelligence Premium Advisor" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+</div>
+</div>
+
+<div class="section">
+<h2>Grant Intelligence Document Upload Center</h2>
+<p class="small-note">Upload a business plan, grant draft, organization profile, or project document. This page extracts the text in your browser and sends the plain text to the AI Grant Writing Coach.</p>
+<div id="grantUploadPanel" class="upload-panel">
+<h3>Upload Your Document</h3>
+<p>Supported files: PDF, DOCX, TXT, CSV, and plain text documents.</p>
+<input id="grantFileInput" type="file" accept=".pdf,.docx,.txt,.csv,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+<div class="upload-actions">
+<button id="chooseGrantFile" class="gold-button" type="button">Choose Document</button>
+<button id="sendGrantDocument" class="gold-button" type="button" disabled>Send to AI Advisor</button>
+<button id="clearGrantDocument" class="dark-button" type="button">Clear</button>
+</div>
+<div id="grantUploadStatus" class="status-box">No document selected yet.</div>
+<div id="grantTextPreview" class="preview-box" style="display:none"></div>
+</div>
 </div>
 
 <div class="section">
 <h2>AI Grant Writing Coach</h2>
 <div class="botpress-box">
-<p>Your AI Grant Writing Coach is available in the chat widget.</p>
+<p>Your AI Grant Writing Coach is available in the chat widget. After you upload and send a document, open the chat and continue the grant intake process.</p>
 </div>
 </div>
 
@@ -58,7 +91,6 @@ h1,h2{color:#d4af37}
 <a class="card" href="module9.html" style="text-decoration:none;color:inherit;display:block"><h3>Module 9</h3><p>Premium training content for Module 9.</p></a>
 <a class="card" href="module10.html" style="text-decoration:none;color:inherit;display:block"><h3>Module 10</h3><p>Premium training content for Module 10.</p></a>
 <a class="card" href="module11.html" style="text-decoration:none;color:inherit;display:block"><h3>Module 11</h3><p>Premium training content for Module 11.</p></a>
-
 </div>
 </div>
 
@@ -76,12 +108,138 @@ h1,h2{color:#d4af37}
 <div class="card"><h3>Submission Checklist</h3><a class="download" href="#">Coming Soon</a></div>
 <div class="card"><h3>Award Management Toolkit</h3><a class="download" href="#">Coming Soon</a></div>
 <div class="card"><h3>Sustainability Planning Guide</h3><a class="download" href="#">Coming Soon</a></div>
-
 </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
 <script src="https://files.bpcontent.cloud/2026/06/21/21/20260621215557-Y77XPWZG.js" defer></script>
+<script>
+(function(){
+  const fileInput = document.getElementById('grantFileInput');
+  const chooseButton = document.getElementById('chooseGrantFile');
+  const sendButton = document.getElementById('sendGrantDocument');
+  const clearButton = document.getElementById('clearGrantDocument');
+  const statusBox = document.getElementById('grantUploadStatus');
+  const previewBox = document.getElementById('grantTextPreview');
+  const uploadPanel = document.getElementById('grantUploadPanel');
+  let extractedDocument = null;
 
+  if (window.pdfjsLib) {
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+
+  function setStatus(message) { statusBox.textContent = message; }
+  function showPreview(text) {
+    previewBox.style.display = 'block';
+    previewBox.textContent = text.slice(0, 4000) + (text.length > 4000 ? '\n\n...preview shortened...' : '');
+  }
+  function resetUpload() {
+    extractedDocument = null;
+    fileInput.value = '';
+    sendButton.disabled = true;
+    previewBox.style.display = 'none';
+    previewBox.textContent = '';
+    setStatus('No document selected yet.');
+  }
+  function readAsText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(reader.error || new Error('Could not read file.'));
+      reader.readAsText(file);
+    });
+  }
+  function readAsArrayBuffer(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error || new Error('Could not read file.'));
+      reader.readAsArrayBuffer(file);
+    });
+  }
+  async function extractPdfText(file) {
+    if (!window.pdfjsLib) throw new Error('PDF reader library did not load.');
+    const buffer = await readAsArrayBuffer(file);
+    const pdf = await window.pdfjsLib.getDocument({ data: buffer }).promise;
+    const pages = [];
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+      const page = await pdf.getPage(pageNumber);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items.map(item => item.str).join(' ');
+      pages.push('--- Page ' + pageNumber + ' ---\n' + pageText);
+    }
+    return pages.join('\n\n');
+  }
+  async function extractDocxText(file) {
+    if (!window.mammoth) throw new Error('DOCX reader library did not load.');
+    const buffer = await readAsArrayBuffer(file);
+    const result = await window.mammoth.extractRawText({ arrayBuffer: buffer });
+    return result.value || '';
+  }
+  async function extractFileText(file) {
+    const name = file.name.toLowerCase();
+    if (name.endsWith('.pdf') || file.type === 'application/pdf') return extractPdfText(file);
+    if (name.endsWith('.docx')) return extractDocxText(file);
+    return readAsText(file);
+  }
+  async function handleFile(file) {
+    if (!file) return;
+    const allowed = /\.(pdf|docx|txt|csv)$/i.test(file.name) || file.type.startsWith('text/');
+    if (!allowed) {
+      resetUpload();
+      setStatus('Unsupported file type. Please upload PDF, DOCX, TXT, or CSV.');
+      return;
+    }
+    try {
+      setStatus('Reading ' + file.name + '...');
+      const text = (await extractFileText(file)).trim();
+      if (!text) throw new Error('No readable text was found. If this is a scanned PDF, it may need OCR first.');
+      extractedDocument = {
+        action: 'DOCUMENT_TEXT_RECEIVED',
+        source: 'premium_upload_center',
+        fileName: file.name,
+        documentType: file.type || file.name.split('.').pop(),
+        documentText: text,
+        textLength: text.length,
+        uploadedAt: new Date().toISOString()
+      };
+      sendButton.disabled = false;
+      setStatus('Ready to send.\nFile: ' + file.name + '\nExtracted characters: ' + text.length.toLocaleString());
+      showPreview(text);
+    } catch (error) {
+      extractedDocument = null;
+      sendButton.disabled = true;
+      setStatus('Could not extract the document text. ' + (error && error.message ? error.message : error));
+    }
+  }
+  async function sendToBotpress() {
+    if (!extractedDocument) {
+      setStatus('Please choose a document first.');
+      return;
+    }
+    if (!window.botpress || typeof window.botpress.sendEvent !== 'function') {
+      setStatus('Botpress webchat is still loading. Wait a few seconds and click Send to AI Advisor again.');
+      return;
+    }
+    try {
+      window.botpress.sendEvent(extractedDocument);
+      setStatus('Sent to AI Advisor.\nFile: ' + extractedDocument.fileName + '\nNow open the chat widget and continue the intake.');
+      if (typeof window.botpress.open === 'function') window.botpress.open();
+    } catch (error) {
+      setStatus('The document text was extracted, but Botpress did not receive it. ' + (error && error.message ? error.message : error));
+    }
+  }
+
+  chooseButton.addEventListener('click', () => fileInput.click());
+  clearButton.addEventListener('click', resetUpload);
+  sendButton.addEventListener('click', sendToBotpress);
+  fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
+  ['dragenter','dragover'].forEach(evt => uploadPanel.addEventListener(evt, e => { e.preventDefault(); uploadPanel.classList.add('dragover'); }));
+  ['dragleave','drop'].forEach(evt => uploadPanel.addEventListener(evt, e => { e.preventDefault(); uploadPanel.classList.remove('dragover'); }));
+  uploadPanel.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
+})();
+</script>
 </body>
 </html>
