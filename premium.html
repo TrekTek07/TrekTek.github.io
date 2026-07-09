@@ -224,9 +224,36 @@ h1,h2{color:#d4af37}
       return;
     }
     try {
+      // 1) Send the full extracted document as a silent custom event.
       window.botpress.sendEvent(extractedDocument);
-      setStatus('Sent to AI Advisor.\nFile: ' + extractedDocument.fileName + '\nNow open the chat widget and continue the intake.');
+
+      // 2) Open the chat so the student can see what is happening.
       if (typeof window.botpress.open === 'function') window.botpress.open();
+
+      // 3) Send a visible user message to wake up the conversation after the silent event.
+      // Different Botpress webchat builds expose slightly different message APIs,
+      // so this tries the common methods and falls back safely if one is unavailable.
+      const visibleMessage =
+        'Document uploaded: ' + extractedDocument.fileName +
+        '. Please analyze the uploaded document now and summarize the plan.';
+
+      if (typeof window.botpress.sendMessage === 'function') {
+        await window.botpress.sendMessage({ type: 'text', text: visibleMessage });
+      } else if (typeof window.botpress.sendEvent === 'function') {
+        await window.botpress.sendEvent({
+          type: 'text',
+          text: visibleMessage,
+          payload: { type: 'text', text: visibleMessage },
+          action: 'DOCUMENT_ANALYSIS_REQUEST',
+          source: 'premium_upload_center'
+        });
+      }
+
+      setStatus(
+        'Sent to AI Advisor.\n' +
+        'File: ' + extractedDocument.fileName + '\n' +
+        'The chat should now ask the bot to analyze the uploaded document.'
+      );
     } catch (error) {
       setStatus('The document text was extracted, but Botpress did not receive it. ' + (error && error.message ? error.message : error));
     }
