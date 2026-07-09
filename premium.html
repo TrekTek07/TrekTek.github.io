@@ -224,9 +224,23 @@ h1,h2{color:#d4af37}
       return;
     }
     try {
+      // 1) Send the full extracted document as a silent custom event.
       window.botpress.sendEvent(extractedDocument);
-      setStatus('Sent to AI Advisor.\nFile: ' + extractedDocument.fileName + '\nNow open the chat widget and continue the intake.');
+
+      // 2) Open the chat so the student can see what is happening.
       if (typeof window.botpress.open === 'function') window.botpress.open();
+
+      // 3) Do NOT send a normal chat message from the website.
+      // Some Botpress webchat builds treat sendMessage payloads as media/audio messages
+      // and reject them with errors like: must have required property 'audioUrl'.
+      // The custom event above is the reliable handoff. Botpress should respond from
+      // the DOCUMENT_INTAKE_TEXT trigger workflow.
+
+      setStatus(
+        'Sent to AI Advisor.\n' +
+        'File: ' + extractedDocument.fileName + '\n' +
+        'If the chat opens but shows no reply, check that DOCUMENT_INTAKE_TEXT connects Trigger1 → RECEIVE_DOCUMENT and that the Text Card displays {{workflow.documentSummary}}.'
+      );
     } catch (error) {
       setStatus('The document text was extracted, but Botpress did not receive it. ' + (error && error.message ? error.message : error));
     }
