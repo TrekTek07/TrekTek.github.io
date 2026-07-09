@@ -230,29 +230,16 @@ h1,h2{color:#d4af37}
       // 2) Open the chat so the student can see what is happening.
       if (typeof window.botpress.open === 'function') window.botpress.open();
 
-      // 3) Send a visible user message to wake up the conversation after the silent event.
-      // Different Botpress webchat builds expose slightly different message APIs,
-      // so this tries the common methods and falls back safely if one is unavailable.
-      const visibleMessage =
-        'Document uploaded: ' + extractedDocument.fileName +
-        '. Please analyze the uploaded document now and summarize the plan.';
-
-      if (typeof window.botpress.sendMessage === 'function') {
-        await window.botpress.sendMessage({ type: 'text', text: visibleMessage });
-      } else if (typeof window.botpress.sendEvent === 'function') {
-        await window.botpress.sendEvent({
-          type: 'text',
-          text: visibleMessage,
-          payload: { type: 'text', text: visibleMessage },
-          action: 'DOCUMENT_ANALYSIS_REQUEST',
-          source: 'premium_upload_center'
-        });
-      }
+      // 3) Do NOT send a normal chat message from the website.
+      // Some Botpress webchat builds treat sendMessage payloads as media/audio messages
+      // and reject them with errors like: must have required property 'audioUrl'.
+      // The custom event above is the reliable handoff. Botpress should respond from
+      // the DOCUMENT_INTAKE_TEXT trigger workflow.
 
       setStatus(
         'Sent to AI Advisor.\n' +
         'File: ' + extractedDocument.fileName + '\n' +
-        'The chat should now ask the bot to analyze the uploaded document.'
+        'If the chat opens but shows no reply, check that DOCUMENT_INTAKE_TEXT connects Trigger1 → RECEIVE_DOCUMENT and that the Text Card displays {{workflow.documentSummary}}.'
       );
     } catch (error) {
       setStatus('The document text was extracted, but Botpress did not receive it. ' + (error && error.message ? error.message : error));
