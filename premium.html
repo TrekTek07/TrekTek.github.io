@@ -21,9 +21,13 @@ h1,h2{color:#d4af37}
 .download{display:inline-block;padding:10px 15px;background:#d4af37;color:#000;text-decoration:none;border-radius:6px}
 .premium-video-wrap{position:relative;width:100%;max-width:960px;margin:22px auto 0;border:2px solid #d4af37;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 20px 60px rgba(0,0,0,.35)}
 .premium-video-wrap iframe{display:block;width:100%;aspect-ratio:16/9;height:auto;min-height:260px}
-.upload-panel{background:#111827;border:2px dashed #d4af37;border-radius:16px;padding:24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-.upload-panel.dragover{background:#172033;border-color:#f5d46b}
-.upload-panel input{display:none}
+.paste-panel{background:#111827;border:2px solid #d4af37;border-radius:16px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.paste-panel textarea{width:100%;min-height:340px;resize:vertical;box-sizing:border-box;background:#020617;color:#f8fafc;border:1px solid rgba(212,175,55,.55);border-radius:12px;padding:16px;font:15px/1.55 Arial,sans-serif}
+.paste-panel textarea:focus{outline:2px solid #d4af37;outline-offset:2px}
+.document-stats{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:14px 0 0;color:#cbd5e1}
+.progress-track{height:14px;background:#020617;border:1px solid rgba(212,175,55,.35);border-radius:999px;overflow:hidden;margin-top:16px}
+.progress-bar{height:100%;width:0;background:#d4af37;transition:width .25s ease}
+.instructions{background:#0b1220;border-left:4px solid #d4af37;border-radius:8px;padding:14px 16px;margin:16px 0;text-align:left;color:#dce7ff}
 .upload-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:18px}
 .gold-button,.dark-button{border:0;border-radius:8px;padding:12px 18px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
 .gold-button{background:#d4af37;color:#000}
@@ -54,26 +58,33 @@ h1,h2{color:#d4af37}
 </div>
 
 <div class="section">
-<h2>Grant Intelligence Document Upload Center</h2>
-<p class="small-note">Upload a business plan, grant draft, organization profile, or project document. This page extracts the text in your browser and sends the plain text to the AI Grant Writing Coach.</p>
-<div id="grantUploadPanel" class="upload-panel">
-<h3>Upload Your Document</h3>
-<p>Supported files: PDF, DOCX, TXT, CSV, and plain text documents.</p>
-<input id="grantFileInput" type="file" accept=".pdf,.docx,.txt,.csv,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+<h2>Grant Intelligence Document Paste Center</h2>
+<p class="small-note">Copy the text from a business plan, grant draft, organization profile, or project document and paste it below. The page will automatically divide a long document into safe, numbered parts and send every part to the AI Grant Writing Coach in order.</p>
+<div id="grantPastePanel" class="paste-panel">
+<h3>Paste Your Complete Document</h3>
+<div class="instructions">
+<strong>How to use this:</strong> Open your document, press <strong>Ctrl+A</strong> to select all, press <strong>Ctrl+C</strong> to copy it, click the box below, and press <strong>Ctrl+V</strong>. You do not need to divide the document yourself.
+</div>
+<label for="grantDocumentText" style="display:block;font-weight:700;margin-bottom:8px">Document text</label>
+<textarea id="grantDocumentText" placeholder="Paste the entire document here..."></textarea>
+<div class="document-stats">
+<span id="grantWordCount">0 words</span>
+<span id="grantCharacterCount">0 characters</span>
+<span id="grantPartCount">0 parts</span>
+</div>
 <div class="upload-actions">
-<button id="chooseGrantFile" class="gold-button" type="button">Choose Document</button>
-<button id="sendGrantDocument" class="gold-button" type="button" disabled>Send to AI Advisor</button>
+<button id="sendGrantDocument" class="gold-button" type="button" disabled>Send Complete Document</button>
 <button id="clearGrantDocument" class="dark-button" type="button">Clear</button>
 </div>
-<div id="grantUploadStatus" class="status-box">No document selected yet.</div>
+<div class="progress-track" aria-label="Document sending progress"><div id="grantProgressBar" class="progress-bar"></div></div>
+<div id="grantUploadStatus" class="status-box">Paste your document above to begin.</div>
 <div id="grantTextPreview" class="preview-box" style="display:none"></div>
 </div>
 </div>
-
 <div class="section">
 <h2>AI Grant Writing Coach</h2>
 <div class="botpress-box">
-<p>Your AI Grant Writing Coach is available in the chat widget. After you upload and send a document, open the chat and continue the grant intake process.</p>
+<p>Your AI Grant Writing Coach is available in the chat widget. Paste and send your document above; the website will deliver all numbered parts automatically, then open the chat so you can continue the grant intake process.</p>
 </div>
 </div>
 
@@ -111,148 +122,171 @@ h1,h2{color:#d4af37}
 </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
 <script src="https://files.bpcontent.cloud/2026/06/21/21/20260621215557-Y77XPWZG.js" defer></script>
 <script>
 (function(){
-  const fileInput = document.getElementById('grantFileInput');
-  const chooseButton = document.getElementById('chooseGrantFile');
+  const textArea = document.getElementById('grantDocumentText');
   const sendButton = document.getElementById('sendGrantDocument');
   const clearButton = document.getElementById('clearGrantDocument');
   const statusBox = document.getElementById('grantUploadStatus');
   const previewBox = document.getElementById('grantTextPreview');
-  const uploadPanel = document.getElementById('grantUploadPanel');
-  let extractedDocument = null;
+  const wordCount = document.getElementById('grantWordCount');
+  const characterCount = document.getElementById('grantCharacterCount');
+  const partCount = document.getElementById('grantPartCount');
+  const progressBar = document.getElementById('grantProgressBar');
 
-  if (window.pdfjsLib) {
-    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  }
+  // Keep each part small enough for reliable Botpress delivery.
+  const MAX_PART_LENGTH = 6000;
+  const SEND_DELAY_MS = 850;
+  let isSending = false;
 
   function setStatus(message) { statusBox.textContent = message; }
-  function showPreview(text) {
-    previewBox.style.display = 'block';
-    previewBox.textContent = text.slice(0, 4000) + (text.length > 4000 ? '\n\n...preview shortened...' : '');
+  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+  function createDocumentId() {
+    return 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
   }
-  function resetUpload() {
-    extractedDocument = null;
-    fileInput.value = '';
-    sendButton.disabled = true;
-    previewBox.style.display = 'none';
-    previewBox.textContent = '';
-    setStatus('No document selected yet.');
-  }
-  function readAsText(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result || ''));
-      reader.onerror = () => reject(reader.error || new Error('Could not read file.'));
-      reader.readAsText(file);
-    });
-  }
-  function readAsArrayBuffer(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(reader.error || new Error('Could not read file.'));
-      reader.readAsArrayBuffer(file);
-    });
-  }
-  async function extractPdfText(file) {
-    if (!window.pdfjsLib) throw new Error('PDF reader library did not load.');
-    const buffer = await readAsArrayBuffer(file);
-    const pdf = await window.pdfjsLib.getDocument({ data: buffer }).promise;
-    const pages = [];
-    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
-      const page = await pdf.getPage(pageNumber);
-      const textContent = await page.getTextContent();
-      const pageText = textContent.items.map(item => item.str).join(' ');
-      pages.push('--- Page ' + pageNumber + ' ---\n' + pageText);
-    }
-    return pages.join('\n\n');
-  }
-  async function extractDocxText(file) {
-    if (!window.mammoth) throw new Error('DOCX reader library did not load.');
-    const buffer = await readAsArrayBuffer(file);
-    const result = await window.mammoth.extractRawText({ arrayBuffer: buffer });
-    return result.value || '';
-  }
-  async function extractFileText(file) {
-    const name = file.name.toLowerCase();
-    if (name.endsWith('.pdf') || file.type === 'application/pdf') return extractPdfText(file);
-    if (name.endsWith('.docx')) return extractDocxText(file);
-    return readAsText(file);
-  }
-  async function handleFile(file) {
-    if (!file) return;
-    const allowed = /\.(pdf|docx|txt|csv)$/i.test(file.name) || file.type.startsWith('text/');
-    if (!allowed) {
-      resetUpload();
-      setStatus('Unsupported file type. Please upload PDF, DOCX, TXT, or CSV.');
-      return;
-    }
-    try {
-      setStatus('Reading ' + file.name + '...');
-      const text = (await extractFileText(file)).trim();
-      if (!text) throw new Error('No readable text was found. If this is a scanned PDF, it may need OCR first.');
-      extractedDocument = {
-        action: 'DOCUMENT_TEXT_RECEIVED',
-        source: 'premium_upload_center',
-        fileName: file.name,
-        documentType: file.type || file.name.split('.').pop(),
-        documentText: text,
-        textLength: text.length,
-        uploadedAt: new Date().toISOString()
-      };
-      sendButton.disabled = false;
-      setStatus('Ready to send.\nFile: ' + file.name + '\nExtracted characters: ' + text.length.toLocaleString());
-      showPreview(text);
-    } catch (error) {
-      extractedDocument = null;
-      sendButton.disabled = true;
-      setStatus('Could not extract the document text. ' + (error && error.message ? error.message : error));
-    }
-  }
-  async function sendToBotpress() {
-    if (!extractedDocument) {
-      setStatus('Please choose a document first.');
-      return;
-    }
-    if (!window.botpress || typeof window.botpress.sendEvent !== 'function') {
-      setStatus('Botpress webchat is still loading. Wait a few seconds and click Send to AI Advisor again.');
-      return;
-    }
-    try {
-      // 1) Send the full extracted document as a silent custom event.
-      window.botpress.sendEvent(extractedDocument);
 
-      // 2) Open the chat so the student can see what is happening.
+  function splitLongBlock(block, maxLength) {
+    const pieces = [];
+    let remaining = block.trim();
+    while (remaining.length > maxLength) {
+      let cut = remaining.lastIndexOf('. ', maxLength);
+      if (cut < Math.floor(maxLength * 0.55)) cut = remaining.lastIndexOf(' ', maxLength);
+      if (cut < Math.floor(maxLength * 0.35)) cut = maxLength;
+      else cut += cut === remaining.lastIndexOf('. ', maxLength) ? 1 : 0;
+      pieces.push(remaining.slice(0, cut).trim());
+      remaining = remaining.slice(cut).trim();
+    }
+    if (remaining) pieces.push(remaining);
+    return pieces;
+  }
+
+  function splitDocument(text) {
+    const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+    if (!normalized) return [];
+
+    const paragraphs = normalized.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+    const parts = [];
+    let current = '';
+
+    for (const paragraph of paragraphs) {
+      const blocks = paragraph.length > MAX_PART_LENGTH
+        ? splitLongBlock(paragraph, MAX_PART_LENGTH)
+        : [paragraph];
+
+      for (const block of blocks) {
+        const candidate = current ? current + '\n\n' + block : block;
+        if (candidate.length <= MAX_PART_LENGTH) {
+          current = candidate;
+        } else {
+          if (current) parts.push(current);
+          current = block;
+        }
+      }
+    }
+    if (current) parts.push(current);
+    return parts;
+  }
+
+  function updateDocumentStats() {
+    const text = textArea.value.trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    const parts = splitDocument(text);
+    wordCount.textContent = words.toLocaleString() + (words === 1 ? ' word' : ' words');
+    characterCount.textContent = text.length.toLocaleString() + (text.length === 1 ? ' character' : ' characters');
+    partCount.textContent = parts.length.toLocaleString() + (parts.length === 1 ? ' part' : ' parts');
+    sendButton.disabled = !text || isSending;
+    previewBox.style.display = text ? 'block' : 'none';
+    previewBox.textContent = text ? text.slice(0, 3500) + (text.length > 3500 ? '\n\n...preview shortened...' : '') : '';
+    if (!isSending) {
+      progressBar.style.width = '0%';
+      setStatus(text ? 'Ready to send ' + parts.length + ' numbered part' + (parts.length === 1 ? '.' : 's.') : 'Paste your document above to begin.');
+    }
+  }
+
+  function resetPasteCenter() {
+    if (isSending) return;
+    textArea.value = '';
+    updateDocumentStats();
+    textArea.focus();
+  }
+
+  async function sendToBotpress() {
+    const completeText = textArea.value.trim();
+    const parts = splitDocument(completeText);
+    if (!parts.length || isSending) return;
+
+    if (!window.botpress || typeof window.botpress.sendEvent !== 'function') {
+      setStatus('Botpress webchat is still loading. Wait a few seconds and click Send Complete Document again.');
+      return;
+    }
+
+    isSending = true;
+    sendButton.disabled = true;
+    clearButton.disabled = true;
+    textArea.disabled = true;
+    const documentId = createDocumentId();
+    const totalParts = parts.length;
+
+    try {
       if (typeof window.botpress.open === 'function') window.botpress.open();
 
-      // 3) Do NOT send a normal chat message from the website.
-      // Some Botpress webchat builds treat sendMessage payloads as media/audio messages
-      // and reject them with errors like: must have required property 'audioUrl'.
-      // The custom event above is the reliable handoff. Botpress should respond from
-      // the DOCUMENT_INTAKE_TEXT trigger workflow.
+      for (let index = 0; index < totalParts; index++) {
+        const partNumber = index + 1;
+        setStatus('Sending document part ' + partNumber + ' of ' + totalParts + '...\nPlease keep this page open until all parts are complete.');
+
+        await Promise.resolve(window.botpress.sendEvent({
+          action: 'DOCUMENT_TEXT_RECEIVED',
+          source: 'premium_paste_center',
+          documentId: documentId,
+          documentName: 'Pasted Document',
+          documentType: 'plain_text',
+          documentText: parts[index],
+          partNumber: partNumber,
+          totalParts: totalParts,
+          isFirstPart: partNumber === 1,
+          isFinalPart: partNumber === totalParts,
+          originalTextLength: completeText.length,
+          partTextLength: parts[index].length,
+          submittedAt: new Date().toISOString()
+        }));
+
+        progressBar.style.width = Math.round((partNumber / totalParts) * 100) + '%';
+        if (partNumber < totalParts) await sleep(SEND_DELAY_MS);
+      }
+
+      await sleep(400);
+      await Promise.resolve(window.botpress.sendEvent({
+        action: 'DOCUMENT_TEXT_COMPLETE',
+        source: 'premium_paste_center',
+        documentId: documentId,
+        totalParts: totalParts,
+        originalTextLength: completeText.length,
+        instruction: 'All numbered document parts have been sent. Combine them in order and analyze the complete document.',
+        submittedAt: new Date().toISOString()
+      }));
 
       setStatus(
-        'Sent to AI Advisor.\n' +
-        'File: ' + extractedDocument.fileName + '\n' +
-        'If the chat opens but shows no reply, check that DOCUMENT_INTAKE_TEXT connects Trigger1 → RECEIVE_DOCUMENT and that the Text Card displays {{workflow.documentSummary}}.'
+        'Complete document sent successfully.\n' +
+        'Parts delivered: ' + totalParts + ' of ' + totalParts + '\n' +
+        'Characters delivered: ' + completeText.length.toLocaleString() + '\n\n' +
+        'Continue in the open AI Grant Writing Coach chat.'
       );
     } catch (error) {
-      setStatus('The document text was extracted, but Botpress did not receive it. ' + (error && error.message ? error.message : error));
+      setStatus('Sending stopped before completion. Your text is still here. Click Send Complete Document to try again.\n\nDetails: ' + (error && error.message ? error.message : error));
+    } finally {
+      isSending = false;
+      sendButton.disabled = false;
+      clearButton.disabled = false;
+      textArea.disabled = false;
     }
   }
 
-  chooseButton.addEventListener('click', () => fileInput.click());
-  clearButton.addEventListener('click', resetUpload);
+  textArea.addEventListener('input', updateDocumentStats);
   sendButton.addEventListener('click', sendToBotpress);
-  fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
-  ['dragenter','dragover'].forEach(evt => uploadPanel.addEventListener(evt, e => { e.preventDefault(); uploadPanel.classList.add('dragover'); }));
-  ['dragleave','drop'].forEach(evt => uploadPanel.addEventListener(evt, e => { e.preventDefault(); uploadPanel.classList.remove('dragover'); }));
-  uploadPanel.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
+  clearButton.addEventListener('click', resetPasteCenter);
+  updateDocumentStats();
 })();
 </script>
 </body>

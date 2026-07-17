@@ -1,0 +1,65 @@
+BOTPRESS MULTI-PART DOCUMENT SETUP
+==================================
+
+The Premium page now accepts pasted text and automatically sends it to Botpress
+in numbered parts of up to 6,000 characters each.
+
+Each part is sent as a custom event with:
+
+  action: DOCUMENT_TEXT_RECEIVED
+  documentId
+  documentText
+  partNumber
+  totalParts
+  isFirstPart
+  isFinalPart
+
+After all parts are sent, the website sends:
+
+  action: DOCUMENT_TEXT_COMPLETE
+
+BOTPRESS WORKFLOW REQUIREMENT
+-----------------------------
+Your DOCUMENT_INTAKE_TEXT trigger workflow must append each part to one workflow
+or user variable instead of replacing the prior part.
+
+Recommended persistent User variables:
+
+  user.documentId          Text
+  user.completeDocumentText Text
+  user.documentPartsReceived Number
+  user.documentTotalParts   Number
+
+On DOCUMENT_TEXT_RECEIVED, use an Execute Code card:
+
+const incomingId = event.payload.documentId
+const incomingText = event.payload.documentText || ''
+const partNumber = Number(event.payload.partNumber || 1)
+const totalParts = Number(event.payload.totalParts || 1)
+
+if (user.documentId !== incomingId || partNumber === 1) {
+  user.documentId = incomingId
+  user.completeDocumentText = ''
+  user.documentPartsReceived = 0
+}
+
+user.completeDocumentText = (user.completeDocumentText || '') +
+  (user.completeDocumentText ? '\n\n' : '') + incomingText
+user.documentPartsReceived = partNumber
+user.documentTotalParts = totalParts
+
+Then add an Expression/Condition:
+
+  event.payload.isFinalPart === true
+
+FALSE path:
+  End silently or display: "Received part {{event.payload.partNumber}} of
+  {{event.payload.totalParts}}."
+
+TRUE path:
+  Send user.completeDocumentText to your DOCUMENT_ANALYSIS AI Task.
+
+IMPORTANT
+---------
+Do not analyze each part separately. Append every part first, then analyze only
+when isFinalPart is true or when DOCUMENT_TEXT_COMPLETE is received.
