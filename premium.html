@@ -36,6 +36,7 @@ h1,h2{color:#d4af37}
 .status-box{margin-top:18px;background:#0b1220;border:1px solid rgba(212,175,55,.35);border-radius:12px;padding:15px;text-align:left;white-space:pre-line;color:#dce7ff}
 .preview-box{margin-top:18px;background:#020617;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:15px;text-align:left;max-height:220px;overflow:auto;color:#cbd5e1;font-size:.92rem;line-height:1.55}
 .small-note{color:#cbd5e1;font-size:.95rem;line-height:1.55;max-width:850px;margin:12px auto 0}
+.gi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:16px}.gi-grid label,.paste-panel>label{display:block;font-weight:700;margin:12px 0 8px}.gi-grid input{width:100%;box-sizing:border-box;background:#020617;color:#f8fafc;border:1px solid rgba(212,175,55,.55);border-radius:10px;padding:12px}.gi-supporting{min-height:180px!important}.required{color:#fbbf24;font-size:.82rem}.optional{color:#94a3b8;font-size:.82rem}.gi-result-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
 </style>
 </head>
 <body>
@@ -59,27 +60,26 @@ h1,h2{color:#d4af37}
 </div>
 
 <div class="section">
-<h2>Grant Intelligence Document Paste Center</h2>
-<p class="small-note">Copy the text from a business plan, grant draft, organization profile, or project document and paste it below. The page will automatically divide a long document into safe, numbered parts and send every part to the AI Grant Writing Coach in order.</p>
-<div id="grantPastePanel" class="paste-panel">
-<h3>Paste Your Complete Document</h3>
-<div class="instructions">
-<strong>How to use this:</strong> Open your document, press <strong>Ctrl+A</strong> to select all, press <strong>Ctrl+C</strong> to copy it, click the box below, and press <strong>Ctrl+V</strong>. You do not need to divide the document yourself.
+<h2>Grant Intelligence™ Analysis Center</h2>
+<p class="small-note">Start with what you have. A résumé alone is enough to begin. You may also add supporting document text when available. Your submission is sent to the published Five Opportunity Choice research workflow through a secure server-side connection.</p>
+<div id="grantAnalysisPanel" class="paste-panel">
+<h3>Analyze My Funding Potential</h3>
+<div class="instructions"><strong>Test path:</strong> For the first integrated test, choose <strong>Résumé Only</strong>, paste the résumé text below, and leave Supporting Document blank. The site will submit <strong>source_mode = standalone_upload</strong> and <strong>access_mode = premium</strong>.</div>
+<div class="gi-grid">
+  <div><label for="giProjectId">Project ID</label><input id="giProjectId" type="text" placeholder="GI-WEBSITE-TEST-001"></div>
+  <div><label for="giEmail">Email (optional for this test)</label><input id="giEmail" type="email" placeholder="name@example.com"></div>
 </div>
-<label for="grantDocumentText" style="display:block;font-weight:700;margin-bottom:8px">Document text</label>
-<textarea id="grantDocumentText" placeholder="Paste the entire document here..."></textarea>
-<div class="document-stats">
-<span id="grantWordCount">0 words</span>
-<span id="grantCharacterCount">0 characters</span>
-<span id="grantPartCount">0 parts</span>
-</div>
+<label for="giResumeText">Résumé text <span class="required">required for Résumé Only</span></label>
+<textarea id="giResumeText" placeholder="Paste the complete résumé here..."></textarea>
+<label for="giDocumentText">Supporting document text <span class="optional">optional</span></label>
+<textarea id="giDocumentText" class="gi-supporting" placeholder="Optional: business plan, executive summary, mission statement, project notes, etc."></textarea>
+<div class="document-stats"><span id="giResumeWords">0 résumé words</span><span id="giDocumentWords">0 supporting words</span></div>
 <div class="upload-actions">
-<button id="sendGrantDocument" class="gold-button" type="button" disabled>Send Complete Document</button>
-<button id="clearGrantDocument" class="dark-button" type="button">Clear</button>
+<button id="giAnalyze" class="gold-button" type="button" disabled>Analyze My Funding Potential</button>
+<button id="giClear" class="dark-button" type="button">Clear</button>
 </div>
-<div class="progress-track" aria-label="Document sending progress"><div id="grantProgressBar" class="progress-bar"></div></div>
-<div id="grantUploadStatus" class="status-box">Paste your document above to begin.</div>
-<div id="grantTextPreview" class="preview-box" style="display:none"></div>
+<div class="progress-track"><div id="giProgress" class="progress-bar"></div></div>
+<div id="giStatus" class="status-box">Paste a résumé to begin.</div>
 </div>
 </div>
 <div class="section">
@@ -125,169 +125,33 @@ h1,h2{color:#d4af37}
 
 <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
 <script src="https://files.bpcontent.cloud/2026/06/21/21/20260621215557-Y77XPWZG.js" defer></script>
+<script src="grant-intelligence-config.js"></script>
 <script>
 (function(){
-  const textArea = document.getElementById('grantDocumentText');
-  const sendButton = document.getElementById('sendGrantDocument');
-  const clearButton = document.getElementById('clearGrantDocument');
-  const statusBox = document.getElementById('grantUploadStatus');
-  const previewBox = document.getElementById('grantTextPreview');
-  const wordCount = document.getElementById('grantWordCount');
-  const characterCount = document.getElementById('grantCharacterCount');
-  const partCount = document.getElementById('grantPartCount');
-  const progressBar = document.getElementById('grantProgressBar');
-
-  // Keep each part small enough for reliable Botpress delivery.
-  const MAX_PART_LENGTH = 6000;
-  const SEND_DELAY_MS = 850;
-  let isSending = false;
-
-  function setStatus(message) { statusBox.textContent = message; }
-  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-  function createDocumentId() {
-    return 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
-  }
-
-  function splitLongBlock(block, maxLength) {
-    const pieces = [];
-    let remaining = block.trim();
-    while (remaining.length > maxLength) {
-      let cut = remaining.lastIndexOf('. ', maxLength);
-      if (cut < Math.floor(maxLength * 0.55)) cut = remaining.lastIndexOf(' ', maxLength);
-      if (cut < Math.floor(maxLength * 0.35)) cut = maxLength;
-      else cut += cut === remaining.lastIndexOf('. ', maxLength) ? 1 : 0;
-      pieces.push(remaining.slice(0, cut).trim());
-      remaining = remaining.slice(cut).trim();
-    }
-    if (remaining) pieces.push(remaining);
-    return pieces;
-  }
-
-  function splitDocument(text) {
-    const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
-    if (!normalized) return [];
-
-    const paragraphs = normalized.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
-    const parts = [];
-    let current = '';
-
-    for (const paragraph of paragraphs) {
-      const blocks = paragraph.length > MAX_PART_LENGTH
-        ? splitLongBlock(paragraph, MAX_PART_LENGTH)
-        : [paragraph];
-
-      for (const block of blocks) {
-        const candidate = current ? current + '\n\n' + block : block;
-        if (candidate.length <= MAX_PART_LENGTH) {
-          current = candidate;
-        } else {
-          if (current) parts.push(current);
-          current = block;
-        }
-      }
-    }
-    if (current) parts.push(current);
-    return parts;
-  }
-
-  function updateDocumentStats() {
-    const text = textArea.value.trim();
-    const words = text ? text.split(/\s+/).length : 0;
-    const parts = splitDocument(text);
-    wordCount.textContent = words.toLocaleString() + (words === 1 ? ' word' : ' words');
-    characterCount.textContent = text.length.toLocaleString() + (text.length === 1 ? ' character' : ' characters');
-    partCount.textContent = parts.length.toLocaleString() + (parts.length === 1 ? ' part' : ' parts');
-    sendButton.disabled = !text || isSending;
-    previewBox.style.display = text ? 'block' : 'none';
-    previewBox.textContent = text ? text.slice(0, 3500) + (text.length > 3500 ? '\n\n...preview shortened...' : '') : '';
-    if (!isSending) {
-      progressBar.style.width = '0%';
-      setStatus(text ? 'Ready to send ' + parts.length + ' numbered part' + (parts.length === 1 ? '.' : 's.') : 'Paste your document above to begin.');
-    }
-  }
-
-  function resetPasteCenter() {
-    if (isSending) return;
-    textArea.value = '';
-    updateDocumentStats();
-    textArea.focus();
-  }
-
-  async function sendToBotpress() {
-    const completeText = textArea.value.trim();
-    const parts = splitDocument(completeText);
-    if (!parts.length || isSending) return;
-
-    if (!window.botpress || typeof window.botpress.sendEvent !== 'function') {
-      setStatus('Botpress webchat is still loading. Wait a few seconds and click Send Complete Document again.');
-      return;
-    }
-
-    isSending = true;
-    sendButton.disabled = true;
-    clearButton.disabled = true;
-    textArea.disabled = true;
-    const documentId = createDocumentId();
-    const totalParts = parts.length;
-
-    try {
-      if (typeof window.botpress.open === 'function') window.botpress.open();
-
-      for (let index = 0; index < totalParts; index++) {
-        const partNumber = index + 1;
-        setStatus('Sending document part ' + partNumber + ' of ' + totalParts + '...\nPlease keep this page open until all parts are complete.');
-
-        await Promise.resolve(window.botpress.sendEvent({
-          action: 'DOCUMENT_TEXT_RECEIVED',
-          source: 'premium_paste_center',
-          documentId: documentId,
-          documentName: 'Pasted Document',
-          documentType: 'plain_text',
-          documentText: parts[index],
-          partNumber: partNumber,
-          totalParts: totalParts,
-          isFirstPart: partNumber === 1,
-          isFinalPart: partNumber === totalParts,
-          originalTextLength: completeText.length,
-          partTextLength: parts[index].length,
-          submittedAt: new Date().toISOString()
-        }));
-
-        progressBar.style.width = Math.round((partNumber / totalParts) * 100) + '%';
-        if (partNumber < totalParts) await sleep(SEND_DELAY_MS);
-      }
-
-      await sleep(400);
-      await Promise.resolve(window.botpress.sendEvent({
-        action: 'DOCUMENT_TEXT_COMPLETE',
-        source: 'premium_paste_center',
-        documentId: documentId,
-        totalParts: totalParts,
-        originalTextLength: completeText.length,
-        instruction: 'All numbered document parts have been sent. Combine them in order and analyze the complete document.',
-        submittedAt: new Date().toISOString()
-      }));
-
-      setStatus(
-        'Complete document sent successfully.\n' +
-        'Parts delivered: ' + totalParts + ' of ' + totalParts + '\n' +
-        'Characters delivered: ' + completeText.length.toLocaleString() + '\n\n' +
-        'Continue in the open AI Grant Writing Coach chat.'
-      );
-    } catch (error) {
-      setStatus('Sending stopped before completion. Your text is still here. Click Send Complete Document to try again.\n\nDetails: ' + (error && error.message ? error.message : error));
-    } finally {
-      isSending = false;
-      sendButton.disabled = false;
-      clearButton.disabled = false;
-      textArea.disabled = false;
-    }
-  }
-
-  textArea.addEventListener('input', updateDocumentStats);
-  sendButton.addEventListener('click', sendToBotpress);
-  clearButton.addEventListener('click', resetPasteCenter);
-  updateDocumentStats();
+ const $=id=>document.getElementById(id);
+ const resume=$('giResumeText'), doc=$('giDocumentText'), analyze=$('giAnalyze'), clear=$('giClear'), status=$('giStatus'), progress=$('giProgress');
+ function words(v){v=v.trim();return v?v.split(/\s+/).length:0}
+ function update(){ $('giResumeWords').textContent=words(resume.value).toLocaleString()+' résumé words'; $('giDocumentWords').textContent=words(doc.value).toLocaleString()+' supporting words'; analyze.disabled=!resume.value.trim(); if(!resume.value.trim()) status.textContent='Paste a résumé to begin.'; }
+ function projectId(){ return $('giProjectId').value.trim() || ('GI-WEB-'+new Date().toISOString().slice(0,10).replaceAll('-','')+'-'+Math.random().toString(36).slice(2,6).toUpperCase()); }
+ async function run(){
+   if(!resume.value.trim()) return;
+   const cfg=window.GRANT_INTELLIGENCE_CONFIG||{};
+   if(!cfg.endpoint || cfg.endpoint.includes('REPLACE_WITH')){ status.textContent='Website is ready, but the secure 5OC endpoint has not been connected yet. Add the deployed backend URL to grant-intelligence-config.js before the live Dify test.'; return; }
+   analyze.disabled=true; clear.disabled=true; progress.style.width='18%'; status.textContent='Submitting to Grant Intelligence… Keep this page open.';
+   const pid=projectId(); $('giProjectId').value=pid;
+   const payload={project_id:pid,access_mode:'premium',source_mode:'standalone_upload',standalone_resume_text:resume.value.trim(),standalone_document_text:doc.value.trim(),standalone_intake_notes:'Submitted from TrekTek Premium Grant Intelligence Analysis Center',module00_source_data:'',module01_source_data:'',email:$('giEmail').value.trim()};
+   try{
+     progress.style.width='38%';
+     const res=await fetch(cfg.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+     const data=await res.json().catch(()=>({}));
+     if(!res.ok) throw new Error(data.message||data.error||('Request failed: '+res.status));
+     progress.style.width='100%';
+     sessionStorage.setItem('giLatestResult',JSON.stringify(data)); sessionStorage.setItem('giLatestProjectId',pid);
+     status.textContent='Analysis completed. Opening your Grant Intelligence results…';
+     setTimeout(()=>location.href='grant-intelligence-results.html',500);
+   }catch(e){ progress.style.width='0%'; status.textContent='Analysis stopped before completion. Nothing will be rerun automatically. Details: '+(e.message||e); analyze.disabled=false; clear.disabled=false; }
+ }
+ resume.addEventListener('input',update); doc.addEventListener('input',update); analyze.addEventListener('click',run); clear.addEventListener('click',()=>{resume.value='';doc.value='';$('giProjectId').value='';$('giEmail').value='';progress.style.width='0%';update();}); update();
 })();
 </script>
 </body>

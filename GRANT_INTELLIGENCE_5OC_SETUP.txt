@@ -1,0 +1,19 @@
+GRANT INTELLIGENCE 5OC WEBSITE BUILD
+
+Front end is ready for the integrated MAIN workflow test.
+
+1. premium.html now contains the Grant Intelligence Analysis Center.
+2. Resume-only test maps to:
+   access_mode = premium
+   source_mode = standalone_upload
+   standalone_resume_text = pasted resume
+   standalone_document_text = optional supporting text
+   module00_source_data = blank
+   module01_source_data = blank
+3. grant-intelligence-results.html renders the returned validated client results.
+4. grant-intelligence-config.js contains ONLY the secure backend URL.
+
+SECURITY REQUIREMENT
+Do not put the Dify API key in GitHub Pages or browser JavaScript. The secure backend must hold the Dify API key and forward the request to the published 5OC MAIN workflow.
+
+The live Dify test cannot begin until grant-intelligence-config.js points to that deployed secure endpoint.
