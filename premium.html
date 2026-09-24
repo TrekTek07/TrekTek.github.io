@@ -36,7 +36,7 @@ h1,h2{color:#d4af37}
 .status-box{margin-top:18px;background:#0b1220;border:1px solid rgba(212,175,55,.35);border-radius:12px;padding:15px;text-align:left;white-space:pre-line;color:#dce7ff}
 .preview-box{margin-top:18px;background:#020617;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:15px;text-align:left;max-height:220px;overflow:auto;color:#cbd5e1;font-size:.92rem;line-height:1.55}
 .small-note{color:#cbd5e1;font-size:.95rem;line-height:1.55;max-width:850px;margin:12px auto 0}
-.gi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:16px}.gi-grid label,.paste-panel>label{display:block;font-weight:700;margin:12px 0 8px}.gi-grid input{width:100%;box-sizing:border-box;background:#020617;color:#f8fafc;border:1px solid rgba(212,175,55,.55);border-radius:10px;padding:12px}.gi-supporting{min-height:180px!important}.required{color:#fbbf24;font-size:.82rem}.optional{color:#94a3b8;font-size:.82rem}.gi-result-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+.gi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:16px}.gi-grid label,.paste-panel>label{display:block;font-weight:700;margin:12px 0 8px}.gi-grid input{width:100%;box-sizing:border-box;background:#020617;color:#f8fafc;border:1px solid rgba(212,175,55,.55);border-radius:10px;padding:12px}.gi-file{border:1px solid rgba(212,175,55,.55);border-radius:12px;padding:14px;margin:8px 0 14px;background:#020617}.gi-file input[type=file]{display:block;width:100%;margin-top:8px;color:#f8fafc}.gi-file-note{color:#94a3b8;font-size:.86rem;margin-top:7px}.gi-supporting{min-height:180px!important}.required{color:#fbbf24;font-size:.82rem}.optional{color:#94a3b8;font-size:.82rem}.gi-result-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
 </style>
 </head>
 <body>
@@ -64,14 +64,18 @@ h1,h2{color:#d4af37}
 <p class="small-note">Start with what you have. A résumé alone is enough to begin. You may also add supporting document text when available. Your submission is sent to the published Five Opportunity Choice research workflow through a secure server-side connection.</p>
 <div id="grantAnalysisPanel" class="paste-panel">
 <h3>Analyze My Funding Potential</h3>
-<div class="instructions"><strong>Test path:</strong> For the first integrated test, choose <strong>Résumé Only</strong>, paste the résumé text below, and leave Supporting Document blank. The site will submit <strong>source_mode = standalone_upload</strong> and <strong>access_mode = premium</strong>.</div>
+<div class="instructions"><strong>Test path:</strong> Attach your résumé below. You do <strong>not</strong> have to strip the text yourself. Supporting documents are optional. The site will submit <strong>source_mode = standalone_upload</strong> and <strong>access_mode = premium</strong>.</div>
 <div class="gi-grid">
   <div><label for="giProjectId">Project ID</label><input id="giProjectId" type="text" placeholder="GI-WEBSITE-TEST-001"></div>
   <div><label for="giEmail">Email (optional for this test)</label><input id="giEmail" type="email" placeholder="name@example.com"></div>
 </div>
-<label for="giResumeText">Résumé text <span class="required">required for Résumé Only</span></label>
-<textarea id="giResumeText" placeholder="Paste the complete résumé here..."></textarea>
-<label for="giDocumentText">Supporting document text <span class="optional">optional</span></label>
+<label for="giResumeFile">Attach Résumé <span class="required">required unless résumé text is pasted</span></label>
+<div class="gi-file"><input id="giResumeFile" type="file" accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"><div id="giResumeFileName" class="gi-file-note">No résumé attached.</div></div>
+<label for="giSupportingFile">Attach Supporting Document <span class="optional">optional</span></label>
+<div class="gi-file"><input id="giSupportingFile" type="file" accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"><div id="giSupportingFileName" class="gi-file-note">No supporting document attached.</div></div>
+<label for="giResumeText">Or paste résumé text <span class="optional">optional when a résumé file is attached</span></label>
+<textarea id="giResumeText" placeholder="Optional: paste résumé text here instead of attaching a file..."></textarea>
+<label for="giDocumentText">Or paste supporting document text <span class="optional">optional</span></label>
 <textarea id="giDocumentText" class="gi-supporting" placeholder="Optional: business plan, executive summary, mission statement, project notes, etc."></textarea>
 <div class="document-stats"><span id="giResumeWords">0 résumé words</span><span id="giDocumentWords">0 supporting words</span></div>
 <div class="upload-actions">
@@ -79,7 +83,7 @@ h1,h2{color:#d4af37}
 <button id="giClear" class="dark-button" type="button">Clear</button>
 </div>
 <div class="progress-track"><div id="giProgress" class="progress-bar"></div></div>
-<div id="giStatus" class="status-box">Paste a résumé to begin.</div>
+<div id="giStatus" class="status-box">Attach a résumé or paste résumé text to begin.</div>
 </div>
 </div>
 <div class="section">
@@ -129,20 +133,35 @@ h1,h2{color:#d4af37}
 <script>
 (function(){
  const $=id=>document.getElementById(id);
- const resume=$('giResumeText'), doc=$('giDocumentText'), analyze=$('giAnalyze'), clear=$('giClear'), status=$('giStatus'), progress=$('giProgress');
+ const resume=$('giResumeText'), doc=$('giDocumentText'), resumeFile=$('giResumeFile'), supportingFile=$('giSupportingFile'), analyze=$('giAnalyze'), clear=$('giClear'), status=$('giStatus'), progress=$('giProgress');
  function words(v){v=v.trim();return v?v.split(/\s+/).length:0}
- function update(){ $('giResumeWords').textContent=words(resume.value).toLocaleString()+' résumé words'; $('giDocumentWords').textContent=words(doc.value).toLocaleString()+' supporting words'; analyze.disabled=!resume.value.trim(); if(!resume.value.trim()) status.textContent='Paste a résumé to begin.'; }
+ function hasResume(){return !!(resume.value.trim() || (resumeFile.files&&resumeFile.files[0]));}
+ function update(){
+   $('giResumeWords').textContent=words(resume.value).toLocaleString()+' résumé words';
+   $('giDocumentWords').textContent=words(doc.value).toLocaleString()+' supporting words';
+   $('giResumeFileName').textContent=resumeFile.files&&resumeFile.files[0] ? 'Attached: '+resumeFile.files[0].name : 'No résumé attached.';
+   $('giSupportingFileName').textContent=supportingFile.files&&supportingFile.files[0] ? 'Attached: '+supportingFile.files[0].name : 'No supporting document attached.';
+   analyze.disabled=!hasResume();
+   if(!hasResume()) status.textContent='Attach a résumé or paste résumé text to begin.';
+   else status.textContent='Ready to analyze. Your attached document will be sent securely when you click Analyze My Funding Potential.';
+ }
  function projectId(){ return $('giProjectId').value.trim() || ('GI-WEB-'+new Date().toISOString().slice(0,10).replaceAll('-','')+'-'+Math.random().toString(36).slice(2,6).toUpperCase()); }
  async function run(){
-   if(!resume.value.trim()) return;
+   if(!hasResume()) return;
    const cfg=window.GRANT_INTELLIGENCE_CONFIG||{};
-   if(!cfg.endpoint || cfg.endpoint.includes('REPLACE_WITH')){ status.textContent='Website is ready, but the secure 5OC endpoint has not been connected yet. Add the deployed backend URL to grant-intelligence-config.js before the live Dify test.'; return; }
-   analyze.disabled=true; clear.disabled=true; progress.style.width='18%'; status.textContent='Submitting to Grant Intelligence… Keep this page open.';
+   if(!cfg.endpoint || cfg.endpoint.includes('REPLACE_WITH')){ status.textContent='The attachment screen is ready, but the secure 5OC endpoint has not been connected yet. No Dify credits were used.'; return; }
+   analyze.disabled=true; clear.disabled=true; progress.style.width='18%'; status.textContent='Uploading your document to Grant Intelligence… Keep this page open.';
    const pid=projectId(); $('giProjectId').value=pid;
-   const payload={project_id:pid,access_mode:'premium',source_mode:'standalone_upload',standalone_resume_text:resume.value.trim(),standalone_document_text:doc.value.trim(),standalone_intake_notes:'Submitted from TrekTek Premium Grant Intelligence Analysis Center',module00_source_data:'',module01_source_data:'',email:$('giEmail').value.trim()};
+   const form=new FormData();
+   form.append('project_id',pid); form.append('access_mode','premium'); form.append('source_mode','standalone_upload');
+   form.append('standalone_resume_text',resume.value.trim()); form.append('standalone_document_text',doc.value.trim());
+   form.append('standalone_intake_notes','Submitted from TrekTek Premium Grant Intelligence Analysis Center');
+   form.append('module00_source_data',''); form.append('module01_source_data',''); form.append('email',$('giEmail').value.trim());
+   if(resumeFile.files&&resumeFile.files[0]) form.append('standalone_resume_file',resumeFile.files[0],resumeFile.files[0].name);
+   if(supportingFile.files&&supportingFile.files[0]) form.append('standalone_document_file',supportingFile.files[0],supportingFile.files[0].name);
    try{
      progress.style.width='38%';
-     const res=await fetch(cfg.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+     const res=await fetch(cfg.endpoint,{method:'POST',body:form});
      const data=await res.json().catch(()=>({}));
      if(!res.ok) throw new Error(data.message||data.error||('Request failed: '+res.status));
      progress.style.width='100%';
@@ -151,7 +170,10 @@ h1,h2{color:#d4af37}
      setTimeout(()=>location.href='grant-intelligence-results.html',500);
    }catch(e){ progress.style.width='0%'; status.textContent='Analysis stopped before completion. Nothing will be rerun automatically. Details: '+(e.message||e); analyze.disabled=false; clear.disabled=false; }
  }
- resume.addEventListener('input',update); doc.addEventListener('input',update); analyze.addEventListener('click',run); clear.addEventListener('click',()=>{resume.value='';doc.value='';$('giProjectId').value='';$('giEmail').value='';progress.style.width='0%';update();}); update();
+ [resume,doc,resumeFile,supportingFile].forEach(el=>el.addEventListener(el.type==='file'?'change':'input',update));
+ analyze.addEventListener('click',run);
+ clear.addEventListener('click',()=>{resume.value='';doc.value='';resumeFile.value='';supportingFile.value='';$('giProjectId').value='';$('giEmail').value='';progress.style.width='0%';update();});
+ update();
 })();
 </script>
 </body>

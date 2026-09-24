@@ -17,3 +17,7 @@ SECURITY REQUIREMENT
 Do not put the Dify API key in GitHub Pages or browser JavaScript. The secure backend must hold the Dify API key and forward the request to the published 5OC MAIN workflow.
 
 The live Dify test cannot begin until grant-intelligence-config.js points to that deployed secure endpoint.
+
+
+ATTACHMENT UPDATE
+The Premium Analysis Center now sends multipart/form-data. The secure endpoint must accept standalone_resume_file and standalone_document_file plus the text fields. Do not place a Dify API key in browser JavaScript.
